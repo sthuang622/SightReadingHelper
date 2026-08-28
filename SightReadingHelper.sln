@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37216.2 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SightReadingHelper", "SightReadingHelper\SightReadingHelper\SightReadingHelper.csproj", "{835F030C-228F-4286-97E8-175C4FB7BDA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SightReadingHelper.Droid", "SightReadingHelper\SightReadingHelper.Droid\SightReadingHelper.Droid.csproj", "{82F43DC2-C499-4A2D-A7F0-E848DA0C45D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SightReadingHelper.iOS", "SightReadingHelper\SightReadingHelper.iOS\SightReadingHelper.iOS.csproj", "{452FEAF3-3B3A-447D-A006-16CA5EEF9D81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SightReadingHelper.Mac", "SightReadingHelper\SightReadingHelper.Mac\SightReadingHelper.Mac.csproj", "{BAC98C78-DD55-4FBB-BA78-925021459AF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SightReadingHelper.WinUI", "SightReadingHelper\SightReadingHelper.WinUI\SightReadingHelper.WinUI.csproj", "{AEEC1AB3-20CE-44B1-8EB8-3E6CFAB98E49}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{835F030C-228F-4286-97E8-175C4FB7BDA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{835F030C-228F-4286-97E8-175C4FB7BDA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{835F030C-228F-4286-97E8-175C4FB7BDA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{835F030C-228F-4286-97E8-175C4FB7BDA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82F43DC2-C499-4A2D-A7F0-E848DA0C45D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82F43DC2-C499-4A2D-A7F0-E848DA0C45D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82F43DC2-C499-4A2D-A7F0-E848DA0C45D1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{82F43DC2-C499-4A2D-A7F0-E848DA0C45D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82F43DC2-C499-4A2D-A7F0-E848DA0C45D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82F43DC2-C499-4A2D-A7F0-E848DA0C45D1}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{452FEAF3-3B3A-447D-A006-16CA5EEF9D81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{452FEAF3-3B3A-447D-A006-16CA5EEF9D81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{452FEAF3-3B3A-447D-A006-16CA5EEF9D81}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{452FEAF3-3B3A-447D-A006-16CA5EEF9D81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{452FEAF3-3B3A-447D-A006-16CA5EEF9D81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{452FEAF3-3B3A-447D-A006-16CA5EEF9D81}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{BAC98C78-DD55-4FBB-BA78-925021459AF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAC98C78-DD55-4FBB-BA78-925021459AF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAC98C78-DD55-4FBB-BA78-925021459AF0}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{BAC98C78-DD55-4FBB-BA78-925021459AF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAC98C78-DD55-4FBB-BA78-925021459AF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAC98C78-DD55-4FBB-BA78-925021459AF0}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{AEEC1AB3-20CE-44B1-8EB8-3E6CFAB98E49}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{AEEC1AB3-20CE-44B1-8EB8-3E6CFAB98E49}.Debug|Any CPU.Build.0 = Debug|x64
+		{AEEC1AB3-20CE-44B1-8EB8-3E6CFAB98E49}.Release|Any CPU.ActiveCfg = Release|x64
+		{AEEC1AB3-20CE-44B1-8EB8-3E6CFAB98E49}.Release|Any CPU.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {845C4A71-9FBB-48CB-949F-A71014A53495}
+	EndGlobalSection
+EndGlobal
