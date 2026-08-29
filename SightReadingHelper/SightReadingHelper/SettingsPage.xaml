@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SightReadingHelper.SettingsPage"
+             Title="Settings">
+    <ScrollView>
+        <VerticalStackLayout Padding="24,20,24,32"
+                             Spacing="16">
+            <Border Style="{StaticResource PanelCardStyle}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Instrument"
+                           Style="{StaticResource SectionTitleStyle}" />
+                    <Picker x:Name="InstrumentPicker"
+                            SelectedIndexChanged="OnInstrumentSelectionChanged"
+                            Title="Select instrument" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource PanelCardStyle}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Practice Defaults"
+                           Style="{StaticResource SectionTitleStyle}" />
+                    <Picker x:Name="ExerciseLengthPicker"
+                            Title="Exercise length" />
+                    <Picker x:Name="TolerancePicker"
+                            Title="Pitch tolerance" />
+                    <Picker x:Name="BeatTempoPicker"
+                            Title="Hold tempo" />
+                    <Picker x:Name="MaxBaseNoteJumpPicker"
+                            Title="Maximum string jump" />
+                    <Label Text="Allowed strings"
+                           Style="{StaticResource EyebrowStyle}" />
+                    <VerticalStackLayout x:Name="BaseNoteOptionsLayout"
+                                         Spacing="8" />
+                    <Grid ColumnDefinitions="*,Auto"
+                          RowDefinitions="Auto,Auto,Auto"
+                          ColumnSpacing="12"
+                          RowSpacing="12">
+                        <Label Grid.Row="0"
+                               Grid.Column="0"
+                               Text="Use beginner range"
+                               Style="{StaticResource BodyTextStyle}" />
+                        <Switch Grid.Row="0"
+                                Grid.Column="1"
+                                x:Name="BeginnerRangeSwitch" />
+
+                        <Label Grid.Row="1"
+                               Grid.Column="0"
+                               Text="Show note names during practice"
+                               Style="{StaticResource BodyTextStyle}" />
+                        <Switch Grid.Row="1"
+                                Grid.Column="1"
+                                x:Name="ShowNoteNameSwitch" />
+
+                        <Label Grid.Row="2"
+                               Grid.Column="0"
+                               Text="Include sharps"
+                               Style="{StaticResource BodyTextStyle}" />
+                        <Switch Grid.Row="2"
+                                Grid.Column="1"
+                                x:Name="AllowSharpsSwitch" />
+                    </Grid>
+                    <Button Text="Save Settings"
+                            Clicked="OnSaveSettingsClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource PanelCardStyle}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Stored Data"
+                           Style="{StaticResource SectionTitleStyle}" />
+                    <Label Text="String tuning is bundled with the app in Resources/Raw/instruments.json. Calibration and settings are written to the app data folder as JSON."
+                           Style="{StaticResource BodyMutedStyle}" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

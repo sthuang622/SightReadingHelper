@@ -1,10 +1,34 @@
-﻿namespace SightReadingHelper
+namespace SightReadingHelper;
+
+public partial class AppShell : Shell
 {
-    public partial class AppShell : Shell
+    public AppShell(
+        MainPage mainPage,
+        CalibrationPage calibrationPage,
+        PracticePage practicePage,
+        SettingsPage settingsPage)
     {
-        public AppShell()
+        InitializeComponent();
+
+        Items.Add(new TabBar
         {
-            InitializeComponent();
-        }
+            Items =
+            {
+                CreateShellContent("Home", "home", mainPage),
+                CreateShellContent("Calibration", "calibration", calibrationPage),
+                CreateShellContent("Practice", "practice", practicePage),
+                CreateShellContent("Settings", "settings", settingsPage)
+            }
+        });
+    }
+
+    private static ShellContent CreateShellContent(string title, string route, Page page)
+    {
+        return new ShellContent
+        {
+            Title = title,
+            Route = route,
+            Content = page
+        };
     }
 }

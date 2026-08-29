@@ -23,6 +23,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.8" />
+		<PackageReference Include="NAudio" Version="2.2.1" />
 		<PackageReference Include="NWaves" Version="0.9.6" />
 	</ItemGroup>
 

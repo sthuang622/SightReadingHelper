@@ -1,0 +1,34 @@
+[
+  {
+    "instrumentName": "Viola",
+    "defaultClef": "Alto clef",
+    "lowestMidiNote": 48,
+    "highestMidiNote": 76,
+    "lowestNoteName": "C3",
+    "highestNoteName": "E5",
+    "beginnerHighestMidiNote": 69,
+    "beginnerHighestNoteName": "A4",
+    "baseNotes": [
+      {
+        "noteName": "C3",
+        "midiNote": 48,
+        "frequencyHz": 130.81
+      },
+      {
+        "noteName": "G3",
+        "midiNote": 55,
+        "frequencyHz": 196.0
+      },
+      {
+        "noteName": "D4",
+        "midiNote": 62,
+        "frequencyHz": 293.66
+      },
+      {
+        "noteName": "A4",
+        "midiNote": 69,
+        "frequencyHz": 440.0
+      }
+    ]
+  }
+]

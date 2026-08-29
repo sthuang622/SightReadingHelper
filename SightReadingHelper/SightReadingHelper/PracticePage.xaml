@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SightReadingHelper.PracticePage"
+             Title="Practice">
+    <ScrollView>
+        <VerticalStackLayout Padding="24,20,24,32"
+                             Spacing="16">
+            <Border Style="{StaticResource PanelCardStyle}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Practice Session"
+                           Style="{StaticResource SectionTitleStyle}" />
+                    <Label x:Name="PracticeSummaryLabel"
+                           Style="{StaticResource BodyTextStyle}" />
+                    <Label x:Name="PracticeSettingsLabel"
+                           Style="{StaticResource BodyMutedStyle}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource PanelCardStyle}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Exercise"
+                           Style="{StaticResource SectionTitleStyle}" />
+                    <ProgressBar x:Name="ExerciseProgressBar"
+                                 Progress="0" />
+                    <Label x:Name="ProgressLabel"
+                           Style="{StaticResource BodyMutedStyle}" />
+                    <ScrollView Orientation="Horizontal">
+                        <GraphicsView x:Name="NotationView"
+                                      HeightRequest="210"
+                                      WidthRequest="720" />
+                    </ScrollView>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource PanelCardStyle}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Current Pitch Target"
+                           Style="{StaticResource SectionTitleStyle}" />
+                    <Label x:Name="ExpectedPitchLabel"
+                           Style="{StaticResource BodyTextStyle}" />
+                    <Label x:Name="DetectedPitchSummaryLabel"
+                           Style="{StaticResource BodyMutedStyle}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource PanelCardStyle}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Microphone"
+                           Style="{StaticResource SectionTitleStyle}" />
+                    <ProgressBar x:Name="MicrophoneLevelBar"
+                                 Progress="0" />
+                    <Label x:Name="MicrophoneStatusLabel"
+                           Style="{StaticResource BodyMutedStyle}" />
+                    <HorizontalStackLayout Spacing="10">
+                        <Button x:Name="StartListeningButton"
+                                Text="Start Listening"
+                                Clicked="OnStartListeningClicked" />
+                        <Button x:Name="StopListeningButton"
+                                Text="Stop"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                IsEnabled="False"
+                                Clicked="OnStopListeningClicked" />
+                    </HorizontalStackLayout>
+                    <Label x:Name="JudgmentLabel"
+                           Style="{StaticResource BodyTextStyle}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="Generate Exercise"
+                        Clicked="OnGenerateExerciseClicked" />
+                <Button Text="Restart"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Clicked="OnRestartExerciseClicked" />
+            </HorizontalStackLayout>
+
+            <Border Style="{StaticResource PanelCardStyle}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="MusicXML Preview"
+                           Style="{StaticResource SectionTitleStyle}" />
+                    <Editor x:Name="MusicXmlEditor"
+                            HeightRequest="240"
+                            IsReadOnly="True"
+                            AutoSize="TextChanges" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

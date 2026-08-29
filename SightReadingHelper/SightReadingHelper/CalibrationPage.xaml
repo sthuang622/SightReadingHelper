@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:SightReadingHelper.Models"
+             x:Class="SightReadingHelper.CalibrationPage"
+             Title="Calibration">
+    <ScrollView>
+        <VerticalStackLayout Padding="24,20,24,32"
+                             Spacing="16">
+            <Border Style="{StaticResource PanelCardStyle}">
+                <VerticalStackLayout Spacing="8">
+                    <Label x:Name="CalibrationHeaderLabel"
+                           Style="{StaticResource SectionTitleStyle}" />
+                    <Label Text="Play each string shown below for 1 second. The app saves the measured pitch once the microphone hears it close to the target."
+                           Style="{StaticResource BodyMutedStyle}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource PanelCardStyle}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Current Reference"
+                           Style="{StaticResource SectionTitleStyle}" />
+                    <ScrollView Orientation="Horizontal">
+                        <GraphicsView x:Name="CalibrationNotationView"
+                                      HeightRequest="160" />
+                    </ScrollView>
+                    <Label x:Name="CurrentExpectedPitchLabel"
+                           Style="{StaticResource BodyTextStyle}" />
+                    <ProgressBar x:Name="CalibrationMicrophoneLevelBar"
+                                 Progress="0" />
+                    <Label x:Name="CalibrationMicrophoneStatusLabel"
+                           Style="{StaticResource BodyMutedStyle}" />
+                    <HorizontalStackLayout Spacing="10">
+                        <Button x:Name="StartCalibrationButton"
+                                Text="Start Listening"
+                                Clicked="OnStartCalibrationClicked" />
+                        <Button x:Name="StopCalibrationButton"
+                                Text="Stop"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                IsEnabled="False"
+                                Clicked="OnStopCalibrationClicked" />
+                        <Button Text="Next"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Clicked="OnNextCalibrationNoteClicked" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <CollectionView x:Name="CalibrationCollectionView"
+                            SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:CalibrationEntryViewModel">
+                        <Border Style="{StaticResource PanelCardStyle}"
+                                Margin="0,0,0,12">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="{Binding ReferenceDisplay}"
+                                       Style="{StaticResource SectionTitleStyle}" />
+                                <Label Text="{Binding ResultDisplay}"
+                                       Style="{StaticResource BodyTextStyle}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="Save Calibration"
+                    Clicked="OnSaveCalibrationClicked" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
