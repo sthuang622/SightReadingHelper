@@ -8,9 +8,9 @@ public class InstrumentProfile
 
     public int SoundingTransposeSemitones { get; set; }
 
-    public string BaseNoteGroupLabel { get; set; } = "strings";
+    public string BaseNoteGroupLabel { get; set; } = "tuning notes";
 
-    public string BaseNoteItemSuffix { get; set; } = "string";
+    public string BaseNoteItemSuffix { get; set; } = "tuning note";
 
     public int LowestMidiNote { get; set; }
 

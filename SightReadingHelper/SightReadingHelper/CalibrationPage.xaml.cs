@@ -90,7 +90,7 @@ public partial class CalibrationPage : ContentPage
                 : "Calibration complete.";
             CalibrationMicrophoneStatusLabel.Text = _entries.Count == 0
                 ? "No calibration notes available."
-                : "All reference notes are saved.";
+                : "All tuning notes are saved.";
             return;
         }
 

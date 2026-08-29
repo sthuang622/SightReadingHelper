@@ -146,6 +146,8 @@ public class StaffNotationDrawable : IDrawable
         canvas.FillEllipse(x - (NoteWidth / 2), y - (NoteHeight / 2), NoteWidth, NoteHeight);
         canvas.DrawEllipse(x - (NoteWidth / 2), y - (NoteHeight / 2), NoteWidth, NoteHeight);
         canvas.RestoreState();
+
+        DrawAccidentalMismatchIndicator(canvas, Notes[CurrentNoteIndex].DisplayMidiNote, GhostMidiNote.Value, x, y);
     }
 
     private static void DrawGhostMatchGlow(ICanvas canvas, float x, float y)
@@ -163,6 +165,38 @@ public class StaffNotationDrawable : IDrawable
         canvas.DrawLine(x, y + 24, x, y + 34);
         canvas.DrawLine(x - 34, y, x - 24, y);
         canvas.DrawLine(x + 24, y, x + 34, y);
+    }
+
+    private void DrawAccidentalMismatchIndicator(
+        ICanvas canvas,
+        int targetMidiNote,
+        int ghostMidiNote,
+        float x,
+        float y)
+    {
+        if (targetMidiNote == ghostMidiNote || GetStaffPosition(targetMidiNote) != GetStaffPosition(ghostMidiNote))
+        {
+            return;
+        }
+
+        var targetHasSharp = HasSharp(targetMidiNote);
+        var ghostHasSharp = HasSharp(ghostMidiNote);
+
+        if (targetHasSharp == ghostHasSharp)
+        {
+            return;
+        }
+
+        var message = targetHasSharp ? "missing ♯" : "extra ♯";
+        var badgeX = x + 18;
+        var badgeY = Math.Max(8, y - 44);
+
+        canvas.FillColor = Color.FromRgba(152, 66, 28, 230);
+        canvas.FillRoundedRectangle(badgeX, badgeY, 76, 25, 8);
+
+        canvas.FontColor = Colors.White;
+        canvas.FontSize = 12;
+        canvas.DrawString(message, badgeX + 6, badgeY + 2, 64, 20, HorizontalAlignment.Center, VerticalAlignment.Center);
     }
 
     private static void DrawLedgerLines(ICanvas canvas, float x, int staffPosition)
@@ -185,7 +219,7 @@ public class StaffNotationDrawable : IDrawable
 
     private static void DrawAccidental(ICanvas canvas, int midiNote, float x, float y)
     {
-        if (!PitchMath.MidiToNoteName(midiNote).Contains('#', StringComparison.Ordinal))
+        if (!HasSharp(midiNote))
         {
             return;
         }
@@ -193,6 +227,11 @@ public class StaffNotationDrawable : IDrawable
         canvas.FontColor = Color.FromArgb("#26231E");
         canvas.FontSize = 24;
         canvas.DrawString("#", x - 33, y - 16, 20, 32, HorizontalAlignment.Center, VerticalAlignment.Center);
+    }
+
+    private static bool HasSharp(int midiNote)
+    {
+        return PitchMath.MidiToNoteName(midiNote).Contains('#', StringComparison.Ordinal);
     }
 
     private int GetStaffPosition(int midiNote)

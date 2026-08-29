@@ -29,7 +29,7 @@
                     <Picker x:Name="MaxBaseNoteJumpPicker"
                             Title="Maximum string jump" />
                     <Label x:Name="AllowedBaseNotesLabel"
-                           Text="Allowed strings"
+                           Text="Allowed tuning notes"
                            Style="{StaticResource EyebrowStyle}" />
                     <VerticalStackLayout x:Name="BaseNoteOptionsLayout"
                                          Spacing="8" />
@@ -70,7 +70,7 @@
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Stored Data"
                            Style="{StaticResource SectionTitleStyle}" />
-                    <Label Text="String tuning is bundled with the app in Resources/Raw/instruments.json. Calibration and settings are written to the app data folder as JSON."
+                    <Label Text="Tuning notes are bundled with the app in Resources/Raw/instruments.json. Calibration and settings are written to the app data folder as JSON."
                            Style="{StaticResource BodyMutedStyle}" />
                 </VerticalStackLayout>
             </Border>
