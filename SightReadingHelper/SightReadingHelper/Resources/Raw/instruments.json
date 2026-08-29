@@ -2,6 +2,9 @@
   {
     "instrumentName": "Viola",
     "defaultClef": "Alto clef",
+    "soundingTransposeSemitones": 0,
+    "baseNoteGroupLabel": "strings",
+    "baseNoteItemSuffix": "string",
     "lowestMidiNote": 48,
     "highestMidiNote": 76,
     "lowestNoteName": "C3",
@@ -28,6 +31,76 @@
         "noteName": "A4",
         "midiNote": 69,
         "frequencyHz": 440.0
+      }
+    ]
+  },
+  {
+    "instrumentName": "Violin",
+    "defaultClef": "Treble clef",
+    "soundingTransposeSemitones": 0,
+    "baseNoteGroupLabel": "strings",
+    "baseNoteItemSuffix": "string",
+    "lowestMidiNote": 55,
+    "highestMidiNote": 83,
+    "lowestNoteName": "G3",
+    "highestNoteName": "B5",
+    "beginnerHighestMidiNote": 76,
+    "beginnerHighestNoteName": "E5",
+    "baseNotes": [
+      {
+        "noteName": "G3",
+        "midiNote": 55,
+        "frequencyHz": 196.0
+      },
+      {
+        "noteName": "D4",
+        "midiNote": 62,
+        "frequencyHz": 293.66
+      },
+      {
+        "noteName": "A4",
+        "midiNote": 69,
+        "frequencyHz": 440.0
+      },
+      {
+        "noteName": "E5",
+        "midiNote": 76,
+        "frequencyHz": 659.25
+      }
+    ]
+  },
+  {
+    "instrumentName": "French Horn",
+    "defaultClef": "Treble clef",
+    "soundingTransposeSemitones": -7,
+    "baseNoteGroupLabel": "reference notes",
+    "baseNoteItemSuffix": "reference",
+    "lowestMidiNote": 60,
+    "highestMidiNote": 81,
+    "lowestNoteName": "C4",
+    "highestNoteName": "A5",
+    "beginnerHighestMidiNote": 72,
+    "beginnerHighestNoteName": "C5",
+    "baseNotes": [
+      {
+        "noteName": "C4",
+        "midiNote": 60,
+        "frequencyHz": 174.61
+      },
+      {
+        "noteName": "G4",
+        "midiNote": 67,
+        "frequencyHz": 261.63
+      },
+      {
+        "noteName": "C5",
+        "midiNote": 72,
+        "frequencyHz": 349.23
+      },
+      {
+        "noteName": "G5",
+        "midiNote": 79,
+        "frequencyHz": 523.25
       }
     ]
   }

@@ -28,7 +28,8 @@
                             Title="Hold tempo" />
                     <Picker x:Name="MaxBaseNoteJumpPicker"
                             Title="Maximum string jump" />
-                    <Label Text="Allowed strings"
+                    <Label x:Name="AllowedBaseNotesLabel"
+                           Text="Allowed strings"
                            Style="{StaticResource EyebrowStyle}" />
                     <VerticalStackLayout x:Name="BaseNoteOptionsLayout"
                                          Spacing="8" />

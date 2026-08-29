@@ -66,8 +66,9 @@ public partial class CalibrationPage : ContentPage
                 {
                     ReferenceNumber = index + 1,
                     NoteName = note.NoteName,
-                    MidiNote = note.MidiNote,
-                    ExpectedFrequencyHz = note.FrequencyHz,
+                    MidiNote = note.MidiNote + _currentInstrument.SoundingTransposeSemitones,
+                    DisplayMidiNote = note.MidiNote,
+                    ExpectedFrequencyHz = PitchMath.MidiToFrequency(note.MidiNote + _currentInstrument.SoundingTransposeSemitones),
                     MeasuredText = existingNote?.MeasuredFrequencyHz.ToString("0.0", CultureInfo.InvariantCulture) ?? string.Empty
                 };
             })
@@ -281,12 +282,15 @@ public partial class CalibrationPage : ContentPage
             {
                 SequenceNumber = entry.ReferenceNumber,
                 MidiNote = entry.MidiNote,
+                DisplayMidiNote = entry.DisplayMidiNote,
                 NoteName = entry.NoteName,
+                DisplayNoteName = entry.NoteName,
                 FrequencyHz = entry.ExpectedFrequencyHz
             })
             .ToList();
 
         _notationDrawable.Notes = notes;
+        _notationDrawable.Clef = _currentInstrument?.DefaultClef ?? "Alto clef";
         _notationDrawable.CurrentNoteIndex = _currentCalibrationIndex;
         _notationDrawable.GhostMidiNote = null;
         CalibrationNotationView.WidthRequest = StaffNotationDrawable.GetRequiredWidth(notes.Count);

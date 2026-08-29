@@ -6,6 +6,7 @@ namespace SightReadingHelper.Services;
 public class PracticeDataService
 {
     private const string InstrumentSeedFileName = "instruments.json";
+    private const string PracticeOptionsFileName = "practice-options.json";
     private const string SettingsFileName = "settings.json";
     private readonly JsonSerializerOptions _serializerOptions = new()
     {
@@ -14,6 +15,7 @@ public class PracticeDataService
     };
 
     private IReadOnlyList<InstrumentProfile>? _cachedInstruments;
+    private PracticeOptionsConfig? _cachedPracticeOptions;
 
     public async Task<IReadOnlyList<InstrumentProfile>> GetInstrumentsAsync()
     {
@@ -35,6 +37,19 @@ public class PracticeDataService
 
         return instruments.FirstOrDefault(instrument => instrument.InstrumentName == settings.InstrumentName)
             ?? instruments.First();
+    }
+
+    public async Task<PracticeOptionsConfig> GetPracticeOptionsAsync()
+    {
+        if (_cachedPracticeOptions is not null)
+        {
+            return _cachedPracticeOptions;
+        }
+
+        await using var stream = await OpenRawFileAsync(PracticeOptionsFileName);
+        var options = await JsonSerializer.DeserializeAsync<PracticeOptionsConfig>(stream, _serializerOptions) ?? new PracticeOptionsConfig();
+        _cachedPracticeOptions = NormalizePracticeOptions(options);
+        return _cachedPracticeOptions;
     }
 
     public async Task<PracticeSettings> GetPracticeSettingsAsync()
@@ -112,39 +127,75 @@ public class PracticeDataService
         return settings;
     }
 
+    private static PracticeOptionsConfig NormalizePracticeOptions(PracticeOptionsConfig options)
+    {
+        if (options.ExerciseLengths.Count == 0)
+        {
+            options.ExerciseLengths = [5, 10, 20];
+        }
+
+        if (options.ToleranceCents.Count == 0)
+        {
+            options.ToleranceCents = [50, 30, 15];
+        }
+
+        if (options.BeatTempoBpms.Count == 0)
+        {
+            options.BeatTempoBpms = [60, 80, 100, 120];
+        }
+
+        if (options.MaxStringJumpLabels.Count == 0)
+        {
+            options.MaxStringJumpLabels =
+            [
+                "Same string only",
+                "Adjacent strings only",
+                "Skip one string",
+                "Any string"
+            ];
+        }
+
+        return options;
+    }
+
     private static async Task<Stream> OpenInstrumentSeedFileAsync()
+    {
+        return await OpenRawFileAsync(InstrumentSeedFileName);
+    }
+
+    private static async Task<Stream> OpenRawFileAsync(string fileName)
     {
         if (OperatingSystem.IsWindows())
         {
-            return OpenInstrumentSeedFileFromDisk();
+            return OpenRawFileFromDisk(fileName);
         }
 
         try
         {
-            return await FileSystem.Current.OpenAppPackageFileAsync(InstrumentSeedFileName);
+            return await FileSystem.Current.OpenAppPackageFileAsync(fileName);
         }
         catch (InvalidOperationException)
         {
-            return OpenInstrumentSeedFileFromDisk();
+            return OpenRawFileFromDisk(fileName);
         }
     }
 
-    private static Stream OpenInstrumentSeedFileFromDisk()
+    private static Stream OpenRawFileFromDisk(string fileName)
     {
-        var outputPath = Path.Combine(AppContext.BaseDirectory, InstrumentSeedFileName);
+        var outputPath = Path.Combine(AppContext.BaseDirectory, fileName);
         if (File.Exists(outputPath))
         {
             return File.OpenRead(outputPath);
         }
 
-        var sourcePath = Path.Combine(AppContext.BaseDirectory, "Resources", "Raw", InstrumentSeedFileName);
+        var sourcePath = Path.Combine(AppContext.BaseDirectory, "Resources", "Raw", fileName);
         if (File.Exists(sourcePath))
         {
             return File.OpenRead(sourcePath);
         }
 
         throw new FileNotFoundException(
-            $"Could not load {InstrumentSeedFileName}. Tried {outputPath} and {sourcePath}.",
-            InstrumentSeedFileName);
+            $"Could not load {fileName}. Tried {outputPath} and {sourcePath}.",
+            fileName);
     }
 }

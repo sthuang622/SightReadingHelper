@@ -39,7 +39,7 @@ public class MusicXmlService
             foreach (var note in exercise.Notes.Skip(measureIndex * beatsPerMeasure).Take(beatsPerMeasure))
             {
                 builder.AppendLine("      <note>");
-                builder.AppendLine($"        {GetPitchXml(note.MidiNote)}");
+                builder.AppendLine($"        {GetPitchXml(note.DisplayMidiNote)}");
                 builder.AppendLine("        <duration>1</duration>");
                 builder.AppendLine("        <type>quarter</type>");
                 builder.AppendLine("      </note>");

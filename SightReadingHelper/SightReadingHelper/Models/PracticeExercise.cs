@@ -6,6 +6,8 @@ public class PracticeExercise
 
     public string Clef { get; set; } = string.Empty;
 
+    public int SoundingTransposeSemitones { get; set; }
+
     public DateTime GeneratedAtUtc { get; set; }
 
     public List<ExerciseNote> Notes { get; set; } = [];

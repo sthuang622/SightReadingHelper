@@ -14,6 +14,8 @@ public class StaffNotationDrawable : IDrawable
 
     public IReadOnlyList<ExerciseNote> Notes { get; set; } = [];
 
+    public string Clef { get; set; } = "Alto clef";
+
     public int CurrentNoteIndex { get; set; }
 
     public int? GhostMidiNote { get; set; }
@@ -25,7 +27,7 @@ public class StaffNotationDrawable : IDrawable
 
         DrawCurrentNoteHighlight(canvas);
         DrawStaff(canvas, dirtyRect);
-        DrawAltoClef(canvas);
+        DrawClef(canvas);
 
         for (var index = 0; index < Notes.Count; index++)
         {
@@ -52,10 +54,23 @@ public class StaffNotationDrawable : IDrawable
         }
     }
 
-    private static void DrawAltoClef(ICanvas canvas)
+    private void DrawClef(ICanvas canvas)
     {
         canvas.FontColor = Color.FromArgb("#26231E");
         canvas.FontSize = 42;
+
+        if (Clef.Equals("Treble clef", StringComparison.OrdinalIgnoreCase))
+        {
+            canvas.DrawString("G", 28, StaffTop - 11, 34, 60, HorizontalAlignment.Center, VerticalAlignment.Center);
+            return;
+        }
+
+        if (Clef.Equals("Bass clef", StringComparison.OrdinalIgnoreCase))
+        {
+            canvas.DrawString("F", 28, StaffTop - 11, 34, 60, HorizontalAlignment.Center, VerticalAlignment.Center);
+            return;
+        }
+
         canvas.DrawString("C", 28, StaffTop - 11, 34, 60, HorizontalAlignment.Center, VerticalAlignment.Center);
 
         canvas.StrokeColor = Color.FromArgb("#26231E");
@@ -77,14 +92,14 @@ public class StaffNotationDrawable : IDrawable
         canvas.FillRoundedRectangle(x - 18, StaffTop - 24, 46, (LineSpacing * 4) + 48, 12);
     }
 
-    private static void DrawNote(ICanvas canvas, ExerciseNote note, int index, bool isComplete)
+    private void DrawNote(ICanvas canvas, ExerciseNote note, int index, bool isComplete)
     {
         var x = FirstNoteX + (index * NoteSpacing);
-        var staffPosition = GetAltoStaffPosition(note.MidiNote);
+        var staffPosition = GetStaffPosition(note.DisplayMidiNote);
         var y = StaffTop + (LineSpacing * 2) - (staffPosition * (LineSpacing / 2));
 
         DrawLedgerLines(canvas, x, staffPosition);
-        DrawAccidental(canvas, note.MidiNote, x, y);
+        DrawAccidental(canvas, note.DisplayMidiNote, x, y);
 
         canvas.FillColor = isComplete ? Color.FromArgb("#1F5C4A") : Color.FromArgb("#26231E");
         canvas.StrokeColor = Color.FromArgb("#26231E");
@@ -107,9 +122,9 @@ public class StaffNotationDrawable : IDrawable
         }
 
         var x = FirstNoteX + (CurrentNoteIndex * NoteSpacing);
-        var staffPosition = GetAltoStaffPosition(GhostMidiNote.Value);
+        var staffPosition = GetStaffPosition(GhostMidiNote.Value);
         var y = StaffTop + (LineSpacing * 2) - (staffPosition * (LineSpacing / 2));
-        var isOnTarget = GhostMidiNote.Value == Notes[CurrentNoteIndex].MidiNote;
+        var isOnTarget = GhostMidiNote.Value == Notes[CurrentNoteIndex].DisplayMidiNote;
 
         DrawLedgerLines(canvas, x, staffPosition);
         DrawAccidental(canvas, GhostMidiNote.Value, x, y);
@@ -180,7 +195,7 @@ public class StaffNotationDrawable : IDrawable
         canvas.DrawString("#", x - 33, y - 16, 20, 32, HorizontalAlignment.Center, VerticalAlignment.Center);
     }
 
-    private static int GetAltoStaffPosition(int midiNote)
+    private int GetStaffPosition(int midiNote)
     {
         var noteName = PitchMath.MidiToNoteName(midiNote);
         var step = noteName[0];
@@ -189,7 +204,20 @@ public class StaffNotationDrawable : IDrawable
             : noteName[1..];
         var octave = int.Parse(octaveText);
 
-        return GetDiatonicIndex(step, octave) - GetDiatonicIndex('C', 4);
+        var centerStep = Clef.ToLowerInvariant() switch
+        {
+            "treble clef" => 'B',
+            "bass clef" => 'D',
+            _ => 'C'
+        };
+        var centerOctave = Clef.ToLowerInvariant() switch
+        {
+            "treble clef" => 4,
+            "bass clef" => 3,
+            _ => 4
+        };
+
+        return GetDiatonicIndex(step, octave) - GetDiatonicIndex(centerStep, centerOctave);
     }
 
     private static int GetDiatonicIndex(char step, int octave)

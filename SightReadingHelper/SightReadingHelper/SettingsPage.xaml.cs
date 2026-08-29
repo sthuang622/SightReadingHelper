@@ -7,6 +7,7 @@ public partial class SettingsPage : ContentPage
 {
     private readonly PracticeDataService _practiceDataService;
     private IReadOnlyList<InstrumentProfile> _instruments = Array.Empty<InstrumentProfile>();
+    private PracticeOptionsConfig _practiceOptions = new();
     private PracticeSettings _settings = new();
     private readonly Dictionary<string, CheckBox> _baseNoteCheckBoxes = [];
 
@@ -25,25 +26,23 @@ public partial class SettingsPage : ContentPage
     private async Task LoadSettingsAsync()
     {
         _instruments = await _practiceDataService.GetInstrumentsAsync();
+        _practiceOptions = await _practiceDataService.GetPracticeOptionsAsync();
         _settings = await _practiceDataService.GetPracticeSettingsAsync();
 
         InstrumentPicker.ItemsSource = _instruments.Select(instrument => instrument.InstrumentName).ToList();
-        ExerciseLengthPicker.ItemsSource = new List<string> { "5 notes", "10 notes", "20 notes" };
-        TolerancePicker.ItemsSource = new List<string> { "50 cents", "30 cents", "15 cents" };
-        BeatTempoPicker.ItemsSource = GetBeatTempoOptions(_settings.BeatTempoBpm);
-        MaxBaseNoteJumpPicker.ItemsSource = new List<string>
-        {
-            "Same string only",
-            "Adjacent strings only",
-            "Skip one string",
-            "Any string"
-        };
+        ExerciseLengthPicker.ItemsSource = GetNumberOptions(_practiceOptions.ExerciseLengths, _settings.ExerciseLength, "notes");
+        TolerancePicker.ItemsSource = GetNumberOptions(_practiceOptions.ToleranceCents, _settings.ToleranceCents, "cents");
+        BeatTempoPicker.ItemsSource = GetNumberOptions(_practiceOptions.BeatTempoBpms, _settings.BeatTempoBpm, "BPM");
+        MaxBaseNoteJumpPicker.ItemsSource = _practiceOptions.MaxStringJumpLabels;
 
         InstrumentPicker.SelectedItem = _settings.InstrumentName;
         ExerciseLengthPicker.SelectedItem = $"{_settings.ExerciseLength} notes";
         TolerancePicker.SelectedItem = $"{_settings.ToleranceCents} cents";
         BeatTempoPicker.SelectedItem = $"{_settings.BeatTempoBpm} BPM";
-        MaxBaseNoteJumpPicker.SelectedIndex = Math.Clamp(_settings.MaxBaseNoteJump ?? 1, 0, 3);
+        MaxBaseNoteJumpPicker.SelectedIndex = Math.Clamp(
+            _settings.MaxBaseNoteJump ?? 1,
+            0,
+            Math.Max(0, _practiceOptions.MaxStringJumpLabels.Count - 1));
         BeginnerRangeSwitch.IsToggled = _settings.UseBeginnerRange;
         ShowNoteNameSwitch.IsToggled = _settings.ShowNoteName;
         AllowSharpsSwitch.IsToggled = _settings.AllowSharps;
@@ -99,6 +98,8 @@ public partial class SettingsPage : ContentPage
             return;
         }
 
+        AllowedBaseNotesLabel.Text = $"Allowed {instrument.BaseNoteGroupLabel}";
+
         var allowedBaseNoteNames = new HashSet<string>(
             _settings.AllowedBaseNoteNames,
             StringComparer.OrdinalIgnoreCase);
@@ -123,7 +124,7 @@ public partial class SettingsPage : ContentPage
 
             row.Add(new Label
             {
-                Text = PitchMath.ToStringLabel(baseNote.NoteName),
+                Text = PitchMath.ToAnchorLabel(baseNote.NoteName, instrument.BaseNoteItemSuffix),
                 Style = (Style)Application.Current!.Resources["BodyTextStyle"],
                 VerticalOptions = LayoutOptions.Center
             }, 0);
@@ -146,17 +147,20 @@ public partial class SettingsPage : ContentPage
             : selectedBaseNoteNames;
     }
 
-    private static List<string> GetBeatTempoOptions(int selectedBeatTempoBpm)
+    private static List<string> GetNumberOptions(
+        IEnumerable<int> configuredValues,
+        int selectedValue,
+        string suffix)
     {
-        var beatTempoOptions = new SortedSet<int> { 60, 80, 100, 120 };
+        var values = new SortedSet<int>(configuredValues.Where(value => value > 0));
 
-        if (selectedBeatTempoBpm > 0)
+        if (selectedValue > 0)
         {
-            beatTempoOptions.Add(selectedBeatTempoBpm);
+            values.Add(selectedValue);
         }
 
-        return beatTempoOptions
-            .Select(beatTempoBpm => $"{beatTempoBpm} BPM")
+        return values
+            .Select(value => $"{value} {suffix}")
             .ToList();
     }
 }

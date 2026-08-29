@@ -1,0 +1,11 @@
+{
+  "exerciseLengths": [5, 10, 20],
+  "toleranceCents": [50, 30, 15],
+  "beatTempoBpms": [60, 80, 100, 120],
+  "maxStringJumpLabels": [
+    "Same string only",
+    "Adjacent strings only",
+    "Skip one string",
+    "Any string"
+  ]
+}

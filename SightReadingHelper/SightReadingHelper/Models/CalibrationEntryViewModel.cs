@@ -20,6 +20,8 @@ public class CalibrationEntryViewModel : INotifyPropertyChanged
 
     public int MidiNote { get; set; }
 
+    public int DisplayMidiNote { get; set; }
+
     public double ExpectedFrequencyHz { get; set; }
 
     public string MeasuredText

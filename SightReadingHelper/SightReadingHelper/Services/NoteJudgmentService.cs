@@ -19,7 +19,7 @@ public class NoteJudgmentService
             };
         }
 
-        var expectedDisplayName = PitchMath.ToDisplayNoteName(expectedNote.NoteName);
+        var expectedDisplayName = PitchMath.ToDisplayNoteName(expectedNote.DisplayNoteName);
         var detectedDisplayName = PitchMath.ToDisplayNoteName(detectedPitch.ClosestNoteName);
 
         if (detectedPitch.ClosestMidiNote != expectedNote.MidiNote)

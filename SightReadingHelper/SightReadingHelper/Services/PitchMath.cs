@@ -57,4 +57,11 @@ public static class PitchMath
     {
         return $"{ToDisplayNoteName(noteName)} string";
     }
+
+    public static string ToAnchorLabel(string noteName, string suffix)
+    {
+        return string.IsNullOrWhiteSpace(suffix)
+            ? ToDisplayNoteName(noteName)
+            : $"{ToDisplayNoteName(noteName)} {suffix}";
+    }
 }

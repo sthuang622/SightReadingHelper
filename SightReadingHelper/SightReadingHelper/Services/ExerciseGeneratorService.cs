@@ -50,6 +50,7 @@ public class ExerciseGeneratorService
         {
             InstrumentName = instrument.InstrumentName,
             Clef = instrument.DefaultClef,
+            SoundingTransposeSemitones = instrument.SoundingTransposeSemitones,
             GeneratedAtUtc = DateTime.UtcNow,
             Notes = notes
         };
@@ -82,13 +83,16 @@ public class ExerciseGeneratorService
     {
         var baseNoteIndex = GetBaseNoteIndex(midiNote, instrument.BaseNotes);
         var baseNote = instrument.BaseNotes[baseNoteIndex];
+        var soundingMidiNote = midiNote + instrument.SoundingTransposeSemitones;
 
         return new ExerciseNote
         {
             SequenceNumber = sequenceNumber,
-            MidiNote = midiNote,
-            NoteName = PitchMath.MidiToNoteName(midiNote),
-            FrequencyHz = PitchMath.MidiToFrequency(midiNote),
+            MidiNote = soundingMidiNote,
+            NoteName = PitchMath.MidiToNoteName(soundingMidiNote),
+            DisplayMidiNote = midiNote,
+            DisplayNoteName = PitchMath.MidiToNoteName(midiNote),
+            FrequencyHz = PitchMath.MidiToFrequency(soundingMidiNote),
             BaseNoteIndex = baseNoteIndex,
             BaseNoteName = baseNote.NoteName
         };
@@ -101,6 +105,8 @@ public class ExerciseGeneratorService
             SequenceNumber = note.SequenceNumber,
             MidiNote = note.MidiNote,
             NoteName = note.NoteName,
+            DisplayMidiNote = note.DisplayMidiNote,
+            DisplayNoteName = note.DisplayNoteName,
             FrequencyHz = note.FrequencyHz,
             BaseNoteIndex = note.BaseNoteIndex,
             BaseNoteName = note.BaseNoteName
@@ -112,7 +118,7 @@ public class ExerciseGeneratorService
         InstrumentProfile instrument,
         PracticeSettings settings)
     {
-        if (!note.NoteName.Contains('#', StringComparison.Ordinal))
+        if (!note.DisplayNoteName.Contains('#', StringComparison.Ordinal))
         {
             return true;
         }
@@ -138,7 +144,7 @@ public class ExerciseGeneratorService
         }
 
         var baseNote = instrument.BaseNotes[note.BaseNoteIndex];
-        return note.MidiNote == baseNote.MidiNote + 1;
+        return note.DisplayMidiNote == baseNote.MidiNote + 1;
     }
 
     private static bool IsBeginnerFingerSharp(ExerciseNote note, InstrumentProfile instrument)
@@ -149,7 +155,7 @@ public class ExerciseGeneratorService
         }
 
         var baseNote = instrument.BaseNotes[note.BaseNoteIndex];
-        var semitonesAboveOpenString = note.MidiNote - baseNote.MidiNote;
+        var semitonesAboveOpenString = note.DisplayMidiNote - baseNote.MidiNote;
 
         return semitonesAboveOpenString is 3 or 6;
     }

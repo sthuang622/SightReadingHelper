@@ -6,6 +6,12 @@ public class InstrumentProfile
 
     public string DefaultClef { get; set; } = string.Empty;
 
+    public int SoundingTransposeSemitones { get; set; }
+
+    public string BaseNoteGroupLabel { get; set; } = "strings";
+
+    public string BaseNoteItemSuffix { get; set; } = "string";
+
     public int LowestMidiNote { get; set; }
 
     public int HighestMidiNote { get; set; }

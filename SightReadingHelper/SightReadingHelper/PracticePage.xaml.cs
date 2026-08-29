@@ -17,13 +17,14 @@ public partial class PracticePage : ContentPage
 
     private InstrumentProfile? _instrument;
     private PracticeSettings? _settings;
+    private PracticeOptionsConfig _practiceOptions = new();
     private CalibrationProfile? _calibration;
     private PracticeExercise? _exercise;
     private int _currentNoteIndex;
     private int _correctCount;
     private bool _isListening;
     private int? _stableCandidateMidiNote;
-    private int? _lastDetectedMidiNote;
+    private int? _lastDetectedDisplayMidiNote;
     private DateTimeOffset _stableCandidateStartedAt;
     private readonly StaffNotationDrawable _notationDrawable = new();
 
@@ -55,11 +56,12 @@ public partial class PracticePage : ContentPage
     private async Task LoadPracticeAsync()
     {
         _settings = await _practiceDataService.GetPracticeSettingsAsync();
+        _practiceOptions = await _practiceDataService.GetPracticeOptionsAsync();
         _instrument = await _practiceDataService.GetSelectedInstrumentAsync();
         _calibration = await _practiceDataService.GetCalibrationAsync(_instrument.InstrumentName);
 
         PracticeSummaryLabel.Text = $"Active instrument: {_instrument.InstrumentName} ({_instrument.DefaultClef}).";
-        PracticeSettingsLabel.Text = $"{_settings.ExerciseLength} notes, ±{_settings.ToleranceCents} cents, hold 1 beat at {_settings.BeatTempoBpm} BPM, {GetAccidentalModeLabel(_settings)}, {(_settings.UseBeginnerRange ? "beginner" : "full")} range, {GetBaseJumpLabel(_settings.MaxBaseNoteJump ?? 1).ToLowerInvariant()}, strings: {GetAllowedBaseNotesLabel(_settings)}.";
+        PracticeSettingsLabel.Text = $"{_settings.ExerciseLength} notes, ±{_settings.ToleranceCents} cents, hold 1 beat at {_settings.BeatTempoBpm} BPM, {GetAccidentalModeLabel(_settings)}, {(_settings.UseBeginnerRange ? "beginner" : "full")} range, {GetBaseJumpLabel(_practiceOptions, _settings.MaxBaseNoteJump ?? 1).ToLowerInvariant()}, {_instrument.BaseNoteGroupLabel}: {GetAllowedBaseNotesLabel(_settings, _instrument)}.";
 
         if (_exercise is null || _exercise.InstrumentName != _instrument.InstrumentName || _exercise.Notes.Count != _settings.ExerciseLength)
         {
@@ -110,7 +112,7 @@ public partial class PracticePage : ContentPage
 
         var currentNote = _exercise.Notes[_currentNoteIndex];
         ExpectedPitchLabel.Text = _settings.ShowNoteName
-            ? $"Target: {PitchMath.ToDisplayNoteName(currentNote.NoteName)} | {currentNote.FrequencyHz:0.0} Hz"
+            ? $"Target: {PitchMath.ToDisplayNoteName(currentNote.DisplayNoteName)} | {currentNote.FrequencyHz:0.0} Hz"
             : $"Target pitch: {currentNote.FrequencyHz:0.0} Hz";
         DetectedPitchSummaryLabel.Text = _isListening
             ? $"Listening for a stable pitch. Hold each note for {GetHoldSeconds(_settings):0.0}s."
@@ -129,8 +131,9 @@ public partial class PracticePage : ContentPage
         }
 
         _notationDrawable.Notes = _exercise.Notes;
+        _notationDrawable.Clef = _exercise.Clef;
         _notationDrawable.CurrentNoteIndex = _currentNoteIndex;
-        _notationDrawable.GhostMidiNote = _lastDetectedMidiNote;
+        _notationDrawable.GhostMidiNote = _lastDetectedDisplayMidiNote;
         NotationView.WidthRequest = StaffNotationDrawable.GetRequiredWidth(_exercise.Notes.Count);
         NotationView.Invalidate();
     }
@@ -198,7 +201,7 @@ public partial class PracticePage : ContentPage
 
         if (!detectedPitch.HasPitch)
         {
-            _lastDetectedMidiNote = null;
+            _lastDetectedDisplayMidiNote = null;
             RenderExercise();
             MicrophoneStatusLabel.Text = detectedPitch.Volume < 0.012
                 ? "Too quiet. Move closer or play a little stronger."
@@ -206,7 +209,7 @@ public partial class PracticePage : ContentPage
             return;
         }
 
-        _lastDetectedMidiNote = detectedPitch.ClosestMidiNote;
+        _lastDetectedDisplayMidiNote = detectedPitch.ClosestMidiNote - _exercise.SoundingTransposeSemitones;
         RenderExercise();
         MicrophoneStatusLabel.Text = $"Heard {PitchMath.ToDisplayNoteName(detectedPitch.ClosestNoteName)} at {detectedPitch.FrequencyHz:0.0} Hz | confidence {detectedPitch.Confidence:P0}";
 
@@ -295,7 +298,7 @@ public partial class PracticePage : ContentPage
     private void ResetStableCandidate()
     {
         _stableCandidateMidiNote = null;
-        _lastDetectedMidiNote = null;
+        _lastDetectedDisplayMidiNote = null;
         _stableCandidateStartedAt = DateTimeOffset.MinValue;
     }
 
@@ -304,22 +307,18 @@ public partial class PracticePage : ContentPage
         return (Color)Application.Current!.Resources[key];
     }
 
-    private static string GetBaseJumpLabel(int maxBaseNoteJump)
+    private static string GetBaseJumpLabel(PracticeOptionsConfig practiceOptions, int maxBaseNoteJump)
     {
-        return maxBaseNoteJump switch
-        {
-            0 => "Same string only",
-            1 => "Adjacent strings only",
-            2 => "Skip one string",
-            _ => "Any string"
-        };
+        return maxBaseNoteJump >= 0 && maxBaseNoteJump < practiceOptions.MaxStringJumpLabels.Count
+            ? practiceOptions.MaxStringJumpLabels[maxBaseNoteJump]
+            : practiceOptions.MaxStringJumpLabels.Last();
     }
 
-    private static string GetAllowedBaseNotesLabel(PracticeSettings settings)
+    private static string GetAllowedBaseNotesLabel(PracticeSettings settings, InstrumentProfile instrument)
     {
         return settings.AllowedBaseNoteNames.Count == 0
             ? "all"
-            : string.Join(", ", settings.AllowedBaseNoteNames.Select(PitchMath.ToStringLabel));
+            : string.Join(", ", settings.AllowedBaseNoteNames.Select(noteName => PitchMath.ToAnchorLabel(noteName, instrument.BaseNoteItemSuffix)));
     }
 
     private static TimeSpan GetStablePitchWindow(PracticeSettings settings)
