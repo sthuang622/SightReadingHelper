@@ -128,7 +128,7 @@ public class ExerciseGeneratorService
             return false;
         }
 
-        if (settings.UseBeginnerRange && IsBeginnerFingerSharp(note, instrument))
+        if (settings.UseBeginnerRange && IsBeginnerExcludedNote(note, instrument))
         {
             return false;
         }
@@ -147,7 +147,7 @@ public class ExerciseGeneratorService
         return note.DisplayMidiNote == baseNote.MidiNote + 1;
     }
 
-    private static bool IsBeginnerFingerSharp(ExerciseNote note, InstrumentProfile instrument)
+    private static bool IsBeginnerExcludedNote(ExerciseNote note, InstrumentProfile instrument)
     {
         if (note.BaseNoteIndex < 0 || note.BaseNoteIndex >= instrument.BaseNotes.Count)
         {
@@ -157,7 +157,7 @@ public class ExerciseGeneratorService
         var baseNote = instrument.BaseNotes[note.BaseNoteIndex];
         var semitonesAboveOpenString = note.DisplayMidiNote - baseNote.MidiNote;
 
-        return semitonesAboveOpenString is 3 or 6;
+        return instrument.BeginnerExcludedSemitoneOffsets.Contains(semitonesAboveOpenString);
     }
 
     private static int GetBaseNoteIndex(int midiNote, IReadOnlyList<InstrumentNote> baseNotes)

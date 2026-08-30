@@ -23,6 +23,20 @@ public class PracticeOptionsConfig
             "Nearby tuning notes only",
             "Wider tuning-note jumps",
             "Any tuning note"
+        ],
+        ["woodwind"] =
+        [
+            "Same tuning note only",
+            "Nearby tuning notes only",
+            "Wider tuning-note jumps",
+            "Any tuning note"
+        ],
+        ["percussion"] =
+        [
+            "Same target only",
+            "Nearby targets only",
+            "Wider target jumps",
+            "Any target"
         ]
     };
 }

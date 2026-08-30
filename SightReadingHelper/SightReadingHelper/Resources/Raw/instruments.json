@@ -12,27 +12,12 @@
     "highestNoteName": "E5",
     "beginnerHighestMidiNote": 69,
     "beginnerHighestNoteName": "A4",
+    "beginnerExcludedSemitoneOffsets": [3, 6],
     "baseNotes": [
-      {
-        "noteName": "C3",
-        "midiNote": 48,
-        "frequencyHz": 130.81
-      },
-      {
-        "noteName": "G3",
-        "midiNote": 55,
-        "frequencyHz": 196.0
-      },
-      {
-        "noteName": "D4",
-        "midiNote": 62,
-        "frequencyHz": 293.66
-      },
-      {
-        "noteName": "A4",
-        "midiNote": 69,
-        "frequencyHz": 440.0
-      }
+      { "noteName": "C3", "midiNote": 48, "frequencyHz": 130.81 },
+      { "noteName": "G3", "midiNote": 55, "frequencyHz": 196.0 },
+      { "noteName": "D4", "midiNote": 62, "frequencyHz": 293.66 },
+      { "noteName": "A4", "midiNote": 69, "frequencyHz": 440.0 }
     ]
   },
   {
@@ -48,27 +33,12 @@
     "highestNoteName": "B5",
     "beginnerHighestMidiNote": 76,
     "beginnerHighestNoteName": "E5",
+    "beginnerExcludedSemitoneOffsets": [3, 6],
     "baseNotes": [
-      {
-        "noteName": "G3",
-        "midiNote": 55,
-        "frequencyHz": 196.0
-      },
-      {
-        "noteName": "D4",
-        "midiNote": 62,
-        "frequencyHz": 293.66
-      },
-      {
-        "noteName": "A4",
-        "midiNote": 69,
-        "frequencyHz": 440.0
-      },
-      {
-        "noteName": "E5",
-        "midiNote": 76,
-        "frequencyHz": 659.25
-      }
+      { "noteName": "G3", "midiNote": 55, "frequencyHz": 196.0 },
+      { "noteName": "D4", "midiNote": 62, "frequencyHz": 293.66 },
+      { "noteName": "A4", "midiNote": 69, "frequencyHz": 440.0 },
+      { "noteName": "E5", "midiNote": 76, "frequencyHz": 659.25 }
     ]
   },
   {
@@ -84,27 +54,121 @@
     "highestNoteName": "A5",
     "beginnerHighestMidiNote": 72,
     "beginnerHighestNoteName": "C5",
+    "beginnerExcludedSemitoneOffsets": [],
     "baseNotes": [
-      {
-        "noteName": "C4",
-        "midiNote": 60,
-        "frequencyHz": 174.61
-      },
-      {
-        "noteName": "G4",
-        "midiNote": 67,
-        "frequencyHz": 261.63
-      },
-      {
-        "noteName": "C5",
-        "midiNote": 72,
-        "frequencyHz": 349.23
-      },
-      {
-        "noteName": "G5",
-        "midiNote": 79,
-        "frequencyHz": 523.25
-      }
+      { "noteName": "C4", "midiNote": 60, "frequencyHz": 174.61 },
+      { "noteName": "G4", "midiNote": 67, "frequencyHz": 261.63 },
+      { "noteName": "C5", "midiNote": 72, "frequencyHz": 349.23 },
+      { "noteName": "G5", "midiNote": 79, "frequencyHz": 523.25 }
+    ]
+  },
+  {
+    "instrumentName": "Clarinet",
+    "instrumentType": "woodwind",
+    "defaultClef": "Treble clef",
+    "soundingTransposeSemitones": -2,
+    "baseNoteGroupLabel": "tuning notes",
+    "baseNoteItemSuffix": "tuning note",
+    "lowestMidiNote": 52,
+    "highestMidiNote": 84,
+    "lowestNoteName": "E3",
+    "highestNoteName": "C6",
+    "beginnerHighestMidiNote": 72,
+    "beginnerHighestNoteName": "C5",
+    "beginnerExcludedSemitoneOffsets": [],
+    "baseNotes": [
+      { "noteName": "E3", "midiNote": 52, "frequencyHz": 146.83 },
+      { "noteName": "G3", "midiNote": 55, "frequencyHz": 174.61 },
+      { "noteName": "C4", "midiNote": 60, "frequencyHz": 233.08 },
+      { "noteName": "G4", "midiNote": 67, "frequencyHz": 349.23 },
+      { "noteName": "C5", "midiNote": 72, "frequencyHz": 466.16 }
+    ]
+  },
+  {
+    "instrumentName": "Flute",
+    "instrumentType": "woodwind",
+    "defaultClef": "Treble clef",
+    "soundingTransposeSemitones": 0,
+    "baseNoteGroupLabel": "tuning notes",
+    "baseNoteItemSuffix": "tuning note",
+    "lowestMidiNote": 60,
+    "highestMidiNote": 84,
+    "lowestNoteName": "C4",
+    "highestNoteName": "C6",
+    "beginnerHighestMidiNote": 76,
+    "beginnerHighestNoteName": "E5",
+    "beginnerExcludedSemitoneOffsets": [],
+    "baseNotes": [
+      { "noteName": "C4", "midiNote": 60, "frequencyHz": 261.63 },
+      { "noteName": "G4", "midiNote": 67, "frequencyHz": 392.0 },
+      { "noteName": "C5", "midiNote": 72, "frequencyHz": 523.25 },
+      { "noteName": "E5", "midiNote": 76, "frequencyHz": 659.26 },
+      { "noteName": "G5", "midiNote": 79, "frequencyHz": 783.99 }
+    ]
+  },
+  {
+    "instrumentName": "Trumpet",
+    "instrumentType": "brass",
+    "defaultClef": "Treble clef",
+    "soundingTransposeSemitones": -2,
+    "baseNoteGroupLabel": "tuning notes",
+    "baseNoteItemSuffix": "tuning note",
+    "lowestMidiNote": 58,
+    "highestMidiNote": 82,
+    "lowestNoteName": "A#3",
+    "highestNoteName": "A#5",
+    "beginnerHighestMidiNote": 72,
+    "beginnerHighestNoteName": "C5",
+    "beginnerExcludedSemitoneOffsets": [],
+    "baseNotes": [
+      { "noteName": "A#3", "midiNote": 58, "frequencyHz": 207.65 },
+      { "noteName": "C4", "midiNote": 60, "frequencyHz": 233.08 },
+      { "noteName": "G4", "midiNote": 67, "frequencyHz": 349.23 },
+      { "noteName": "C5", "midiNote": 72, "frequencyHz": 466.16 },
+      { "noteName": "G5", "midiNote": 79, "frequencyHz": 698.46 }
+    ]
+  },
+  {
+    "instrumentName": "Trombone",
+    "instrumentType": "brass",
+    "defaultClef": "Bass clef",
+    "soundingTransposeSemitones": 0,
+    "baseNoteGroupLabel": "tuning notes",
+    "baseNoteItemSuffix": "tuning note",
+    "lowestMidiNote": 40,
+    "highestMidiNote": 70,
+    "lowestNoteName": "E2",
+    "highestNoteName": "A#4",
+    "beginnerHighestMidiNote": 58,
+    "beginnerHighestNoteName": "A#3",
+    "beginnerExcludedSemitoneOffsets": [],
+    "baseNotes": [
+      { "noteName": "F2", "midiNote": 41, "frequencyHz": 87.31 },
+      { "noteName": "A#2", "midiNote": 46, "frequencyHz": 116.54 },
+      { "noteName": "F3", "midiNote": 53, "frequencyHz": 174.61 },
+      { "noteName": "A#3", "midiNote": 58, "frequencyHz": 233.08 },
+      { "noteName": "F4", "midiNote": 65, "frequencyHz": 349.23 }
+    ]
+  },
+  {
+    "instrumentName": "Drums",
+    "instrumentType": "percussion",
+    "defaultClef": "Percussion clef",
+    "soundingTransposeSemitones": 0,
+    "baseNoteGroupLabel": "practice targets",
+    "baseNoteItemSuffix": "target",
+    "lowestMidiNote": 36,
+    "highestMidiNote": 46,
+    "lowestNoteName": "C2",
+    "highestNoteName": "A#2",
+    "beginnerHighestMidiNote": 46,
+    "beginnerHighestNoteName": "A#2",
+    "beginnerExcludedSemitoneOffsets": [],
+    "baseNotes": [
+      { "noteName": "C2", "midiNote": 36, "frequencyHz": 65.41 },
+      { "noteName": "D2", "midiNote": 38, "frequencyHz": 73.42 },
+      { "noteName": "F#2", "midiNote": 42, "frequencyHz": 92.5 },
+      { "noteName": "A#2", "midiNote": 46, "frequencyHz": 116.54 }
     ]
   }
 ]

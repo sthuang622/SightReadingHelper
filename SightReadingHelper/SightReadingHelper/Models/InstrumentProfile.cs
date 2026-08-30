@@ -26,5 +26,7 @@ public class InstrumentProfile
 
     public string BeginnerHighestNoteName { get; set; } = string.Empty;
 
+    public List<int> BeginnerExcludedSemitoneOffsets { get; set; } = [];
+
     public List<InstrumentNote> BaseNotes { get; set; } = [];
 }
