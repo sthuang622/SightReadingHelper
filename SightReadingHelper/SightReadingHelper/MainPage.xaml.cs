@@ -31,16 +31,12 @@ public partial class MainPage : ContentPage
         _settings = await _practiceDataService.GetPracticeSettingsAsync();
         var instrument = _instruments.FirstOrDefault(item => item.InstrumentName == _settings.InstrumentName)
             ?? _instruments.First();
-        var calibration = await _practiceDataService.GetCalibrationAsync(instrument.InstrumentName);
 
         LoadQuickOptions(instrument);
 
         SelectedInstrumentLabel.Text = instrument.InstrumentName;
         InstrumentSummaryLabel.Text = $"Built for {instrument.DefaultClef.ToLowerInvariant()} sight-reading and single-note pitch work.";
         ClefValueLabel.Text = instrument.DefaultClef;
-        CalibrationStatusLabel.Text = calibration is null
-            ? "Not started"
-            : $"{calibration.Notes.Count} notes saved";
         _isLoadingHomeOptions = false;
     }
 
@@ -57,7 +53,7 @@ public partial class MainPage : ContentPage
             _settings.MaxBaseNoteJump ?? 1,
             0,
             Math.Max(0, jumpLabels.Count - 1));
-        HomeBeginnerRangeSwitch.IsToggled = _settings.UseBeginnerRange;
+        HomeBiggerRangeSwitch.IsToggled = !_settings.UseBeginnerRange;
     }
 
     private async void OnHomeOptionChanged(object sender, EventArgs e)
@@ -88,7 +84,7 @@ public partial class MainPage : ContentPage
             BeatTempoBpm = int.Parse(beatTempo.Split(' ')[0]),
             MaxBaseNoteJump = HomeMaxJumpPicker.SelectedIndex,
             AllowedBaseNoteNames = _settings.AllowedBaseNoteNames,
-            UseBeginnerRange = HomeBeginnerRangeSwitch.IsToggled,
+            UseBeginnerRange = !HomeBiggerRangeSwitch.IsToggled,
             AllowSharps = _settings.AllowSharps,
             AvoidOpenStringSharps = _settings.AvoidOpenStringSharps,
             ShowNoteName = _settings.ShowNoteName
@@ -106,11 +102,6 @@ public partial class MainPage : ContentPage
     private async void OnOpenCalibrationClicked(object sender, EventArgs e)
     {
         await Shell.Current.GoToAsync("//calibration");
-    }
-
-    private async void OnOpenSettingsClicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("//settings");
     }
 
     private static List<string> GetNumberOptions(

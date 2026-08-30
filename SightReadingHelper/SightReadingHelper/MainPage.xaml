@@ -98,11 +98,10 @@
                 <Border Grid.Row="0"
                         Grid.Column="1"
                         Style="{StaticResource StatusCardStyle}">
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="Calibration"
-                               Style="{StaticResource EyebrowStyle}" />
-                        <Label x:Name="CalibrationStatusLabel"
-                               Style="{StaticResource StatValueStyle}" />
+                    <VerticalStackLayout Spacing="3">
+                        <Picker x:Name="HomeInstrumentPicker"
+                                Title="Instrument"
+                                SelectedIndexChanged="OnHomeOptionChanged" />
                     </VerticalStackLayout>
                 </Border>
             </Grid>
@@ -117,24 +116,32 @@
                             <Label Text="Tune the session before jumping in."
                                    Style="{StaticResource BodyMutedStyle}" />
                         </VerticalStackLayout>
-                        <Button Grid.Column="1"
-                                Text="More"
-                                Style="{StaticResource SecondaryButtonStyle}"
-                                Clicked="OnOpenSettingsClicked" />
+                        <Border Grid.Column="1"
+                                Style="{StaticResource StatusCardStyle}"
+                                Padding="12,8">
+                            <Grid ColumnDefinitions="Auto,Auto"
+                                  ColumnSpacing="8">
+                                <Label Grid.Column="0"
+                                       Text="Use bigger range"
+                                       Style="{StaticResource BodyTextStyle}"
+                                       VerticalOptions="Center" />
+                                <Switch Grid.Column="1"
+                                        x:Name="HomeBiggerRangeSwitch"
+                                        Toggled="OnHomeOptionToggled" />
+                            </Grid>
+                        </Border>
                     </Grid>
 
                     <Grid ColumnDefinitions="*,*"
-                          RowDefinitions="Auto,Auto"
+                          RowDefinitions="Auto"
                           ColumnSpacing="12"
                           RowSpacing="12">
                         <Border Grid.Row="0"
                                 Grid.Column="0"
                                 Style="{StaticResource StatusCardStyle}">
                             <VerticalStackLayout Spacing="3">
-                                <Label Text="Instrument"
-                                       Style="{StaticResource EyebrowStyle}" />
-                                <Picker x:Name="HomeInstrumentPicker"
-                                        Title="Instrument"
+                                <Picker x:Name="HomeMaxJumpPicker"
+                                        Title="Tuning note movement"
                                         SelectedIndexChanged="OnHomeOptionChanged" />
                             </VerticalStackLayout>
                         </Border>
@@ -143,39 +150,12 @@
                                 Grid.Column="1"
                                 Style="{StaticResource StatusCardStyle}">
                             <VerticalStackLayout Spacing="3">
-                                <Label Text="Hold"
-                                       Style="{StaticResource EyebrowStyle}" />
                                 <Picker x:Name="HomeBeatTempoPicker"
-                                        Title="Hold tempo"
-                                        SelectedIndexChanged="OnHomeOptionChanged" />
-                            </VerticalStackLayout>
-                        </Border>
-
-                        <Border Grid.Row="1"
-                                Grid.ColumnSpan="2"
-                                Style="{StaticResource StatusCardStyle}">
-                            <VerticalStackLayout Spacing="3">
-                                <Label Text="Movement"
-                                       Style="{StaticResource EyebrowStyle}" />
-                                <Picker x:Name="HomeMaxJumpPicker"
-                                        Title="Maximum tuning-note jump"
+                                        Title="Tempo"
                                         SelectedIndexChanged="OnHomeOptionChanged" />
                             </VerticalStackLayout>
                         </Border>
                     </Grid>
-
-                    <Border Style="{StaticResource StatusCardStyle}">
-                        <Grid ColumnDefinitions="*,Auto"
-                              ColumnSpacing="8">
-                            <Label Grid.Column="0"
-                                   Text="Use beginner range"
-                                   Style="{StaticResource BodyTextStyle}"
-                                   VerticalOptions="Center" />
-                            <Switch Grid.Column="1"
-                                    x:Name="HomeBeginnerRangeSwitch"
-                                    Toggled="OnHomeOptionToggled" />
-                        </Grid>
-                    </Border>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>
