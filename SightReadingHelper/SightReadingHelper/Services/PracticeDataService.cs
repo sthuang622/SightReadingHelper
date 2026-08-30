@@ -24,7 +24,9 @@ public class PracticeDataService
             return _cachedInstruments;
         }
 
-        await using var stream = await OpenInstrumentSeedFileAsync();
+        await using var stream = File.Exists(GetInstrumentDataPath())
+            ? File.OpenRead(GetInstrumentDataPath())
+            : await OpenInstrumentSeedFileAsync();
         var instruments = await JsonSerializer.DeserializeAsync<List<InstrumentProfile>>(stream, _serializerOptions) ?? [];
         _cachedInstruments = instruments;
         return _cachedInstruments;
@@ -74,31 +76,53 @@ public class PracticeDataService
 
     public async Task<CalibrationProfile?> GetCalibrationAsync(string instrumentName)
     {
-        var path = GetCalibrationPath(instrumentName);
-        if (!File.Exists(path))
+        var instruments = await GetInstrumentsAsync();
+        var instrument = instruments.FirstOrDefault(item => item.InstrumentName == instrumentName);
+
+        if (instrument?.Calibration is not null)
+        {
+            return instrument.Calibration;
+        }
+
+        var settingsCalibration = await GetSettingsCalibrationAsync(instrumentName);
+        if (settingsCalibration is not null)
+        {
+            await SaveCalibrationAsync(settingsCalibration);
+            return settingsCalibration;
+        }
+
+        var legacyCalibration = await GetLegacyCalibrationAsync(instrumentName);
+        if (legacyCalibration is null)
         {
             return null;
         }
 
-        var json = await File.ReadAllTextAsync(path);
-        return JsonSerializer.Deserialize<CalibrationProfile>(json, _serializerOptions);
+        await SaveCalibrationAsync(legacyCalibration);
+        return legacyCalibration;
     }
 
     public async Task SaveCalibrationAsync(CalibrationProfile calibration)
     {
-        var path = GetCalibrationPath(calibration.InstrumentName);
-        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-        await File.WriteAllTextAsync(path, JsonSerializer.Serialize(calibration, _serializerOptions));
-    }
+        var instruments = (await GetInstrumentsAsync()).ToList();
+        var instrument = instruments.FirstOrDefault(item => item.InstrumentName == calibration.InstrumentName);
 
-    public string GetCalibrationJsonPath(string instrumentName)
-    {
-        return GetCalibrationPath(instrumentName);
+        if (instrument is null)
+        {
+            return;
+        }
+
+        instrument.Calibration = calibration;
+        await SaveInstrumentsAsync(instruments);
     }
 
     private static string GetSettingsPath()
     {
         return Path.Combine(FileSystem.Current.AppDataDirectory, "Data", SettingsFileName);
+    }
+
+    private static string GetInstrumentDataPath()
+    {
+        return Path.Combine(FileSystem.Current.AppDataDirectory, "Data", InstrumentSeedFileName);
     }
 
     private static string GetCalibrationPath(string instrumentName)
@@ -237,5 +261,50 @@ public class PracticeDataService
         throw new FileNotFoundException(
             $"Could not load {fileName}. Tried {outputPath} and {sourcePath}.",
             fileName);
+    }
+
+    private async Task SaveInstrumentsAsync(List<InstrumentProfile> instruments)
+    {
+        var path = GetInstrumentDataPath();
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        await File.WriteAllTextAsync(path, JsonSerializer.Serialize(instruments, _serializerOptions));
+        _cachedInstruments = instruments;
+    }
+
+    private async Task<CalibrationProfile?> GetSettingsCalibrationAsync(string instrumentName)
+    {
+        var path = GetSettingsPath();
+        if (!File.Exists(path))
+        {
+            return null;
+        }
+
+        var json = await File.ReadAllTextAsync(path);
+        using var document = JsonDocument.Parse(json);
+
+        if (!document.RootElement.TryGetProperty("Calibrations", out var calibrations)
+            && !document.RootElement.TryGetProperty("calibrations", out calibrations))
+        {
+            return null;
+        }
+
+        if (!calibrations.TryGetProperty(instrumentName, out var calibrationElement))
+        {
+            return null;
+        }
+
+        return calibrationElement.Deserialize<CalibrationProfile>(_serializerOptions);
+    }
+
+    private async Task<CalibrationProfile?> GetLegacyCalibrationAsync(string instrumentName)
+    {
+        var path = GetCalibrationPath(instrumentName);
+        if (!File.Exists(path))
+        {
+            return null;
+        }
+
+        var json = await File.ReadAllTextAsync(path);
+        return JsonSerializer.Deserialize<CalibrationProfile>(json, _serializerOptions);
     }
 }

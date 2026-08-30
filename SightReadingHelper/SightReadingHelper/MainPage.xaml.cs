@@ -15,6 +15,7 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         _practiceDataService = practiceDataService;
+        AttachHoverEffects();
     }
 
     protected override async void OnAppearing()
@@ -42,12 +43,20 @@ public partial class MainPage : ContentPage
 
     private void LoadQuickOptions(InstrumentProfile instrument)
     {
-        HomeInstrumentPicker.ItemsSource = _instruments.Select(item => item.InstrumentName).ToList();
+        HomeInstrumentTypePicker.ItemsSource = _instruments
+            .Select(item => item.InstrumentType)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(item => item)
+            .Select(GetInstrumentTypeLabel)
+            .ToList();
+        HomeInstrumentTypePicker.SelectedItem = GetInstrumentTypeLabel(instrument.InstrumentType);
+
+        LoadInstrumentPickerItems(instrument.InstrumentType, instrument.InstrumentName);
+
         HomeBeatTempoPicker.ItemsSource = GetNumberOptions(_practiceOptions.BeatTempoBpms, _settings.BeatTempoBpm, "BPM");
         var jumpLabels = GetMaxJumpLabels(_practiceOptions, instrument);
         HomeMaxJumpPicker.ItemsSource = jumpLabels;
 
-        HomeInstrumentPicker.SelectedItem = instrument.InstrumentName;
         HomeBeatTempoPicker.SelectedItem = $"{_settings.BeatTempoBpm} BPM";
         HomeMaxJumpPicker.SelectedIndex = Math.Clamp(
             _settings.MaxBaseNoteJump ?? 1,
@@ -56,8 +65,35 @@ public partial class MainPage : ContentPage
         HomeBiggerRangeSwitch.IsToggled = !_settings.UseBeginnerRange;
     }
 
+    private void LoadInstrumentPickerItems(string instrumentType, string? selectedInstrumentName)
+    {
+        var instrumentNames = _instruments
+            .Where(item => item.InstrumentType.Equals(instrumentType, StringComparison.OrdinalIgnoreCase))
+            .Select(item => item.InstrumentName)
+            .ToList();
+
+        HomeInstrumentPicker.ItemsSource = instrumentNames;
+        HomeInstrumentPicker.SelectedItem = selectedInstrumentName is not null && instrumentNames.Contains(selectedInstrumentName)
+            ? selectedInstrumentName
+            : instrumentNames.FirstOrDefault();
+    }
+
     private async void OnHomeOptionChanged(object sender, EventArgs e)
     {
+        await SaveHomeOptionsAsync();
+    }
+
+    private async void OnHomeInstrumentTypeChanged(object sender, EventArgs e)
+    {
+        if (_isLoadingHomeOptions || HomeInstrumentTypePicker.SelectedItem is not string selectedInstrumentTypeLabel)
+        {
+            return;
+        }
+
+        _isLoadingHomeOptions = true;
+        LoadInstrumentPickerItems(GetInstrumentTypeFromLabel(selectedInstrumentTypeLabel), null);
+        _isLoadingHomeOptions = false;
+
         await SaveHomeOptionsAsync();
     }
 
@@ -104,6 +140,61 @@ public partial class MainPage : ContentPage
         await Shell.Current.GoToAsync("//calibration");
     }
 
+    private async void OnOpenSettingsClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//settings");
+    }
+
+    private void AttachHoverEffects()
+    {
+        AttachButtonHoverEffect(
+            StartPracticeButton,
+            GetColor("Primary"),
+            GetColor("Accent"),
+            GetColor("White"));
+        AttachButtonHoverEffect(
+            CalibrateButton,
+            GetColor("Secondary"),
+            GetColor("Accent"),
+            GetColor("PrimaryDarkText"));
+        AttachButtonHoverEffect(
+            SettingsButton,
+            GetColor("Secondary"),
+            GetColor("Accent"),
+            GetColor("PrimaryDarkText"));
+
+    }
+
+    private static void AttachButtonHoverEffect(
+        Button button,
+        Color defaultBackgroundColor,
+        Color hoverBackgroundColor,
+        Color textColor)
+    {
+        button.BackgroundColor = defaultBackgroundColor;
+        button.TextColor = textColor;
+
+        var pointerGesture = new PointerGestureRecognizer();
+
+        pointerGesture.PointerEntered += async (_, _) =>
+        {
+            button.BackgroundColor = hoverBackgroundColor;
+            await Task.WhenAll(
+                button.ScaleTo(1.018, 110, Easing.CubicOut),
+                button.TranslateTo(0, -2, 110, Easing.CubicOut));
+        };
+
+        pointerGesture.PointerExited += async (_, _) =>
+        {
+            button.BackgroundColor = defaultBackgroundColor;
+            await Task.WhenAll(
+                button.ScaleTo(1, 130, Easing.CubicOut),
+                button.TranslateTo(0, 0, 130, Easing.CubicOut));
+        };
+
+        button.GestureRecognizers.Add(pointerGesture);
+    }
+
     private static List<string> GetNumberOptions(
         IEnumerable<int> configuredValues,
         int selectedValue,
@@ -126,5 +217,22 @@ public partial class MainPage : ContentPage
         return practiceOptions.MaxTuningNoteJumpLabelsByInstrumentType.TryGetValue(instrument.InstrumentType, out var labels)
             ? labels
             : practiceOptions.MaxTuningNoteJumpLabelsByInstrumentType["string"];
+    }
+
+    private static string GetInstrumentTypeLabel(string instrumentType)
+    {
+        return string.IsNullOrWhiteSpace(instrumentType)
+            ? "Other"
+            : $"{char.ToUpperInvariant(instrumentType[0])}{instrumentType[1..].ToLowerInvariant()}";
+    }
+
+    private static string GetInstrumentTypeFromLabel(string instrumentTypeLabel)
+    {
+        return instrumentTypeLabel.ToLowerInvariant();
+    }
+
+    private static Color GetColor(string key)
+    {
+        return (Color)Application.Current!.Resources[key];
     }
 }

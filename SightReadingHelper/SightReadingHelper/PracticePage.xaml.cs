@@ -306,6 +306,11 @@ public partial class PracticePage : ContentPage
         RefreshPracticeView();
     }
 
+    private async void OnHomeClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//home");
+    }
+
     protected override async void OnDisappearing()
     {
         base.OnDisappearing();

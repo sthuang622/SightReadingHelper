@@ -56,7 +56,6 @@ public partial class CalibrationPage : ContentPage
         var existingCalibration = await _practiceDataService.GetCalibrationAsync(_currentInstrument.InstrumentName);
 
         CalibrationHeaderLabel.Text = $"{_currentInstrument.InstrumentName} tuning notes";
-        CalibrationStorageLabel.Text = $"JSON: {_practiceDataService.GetCalibrationJsonPath(_currentInstrument.InstrumentName)}";
 
         var entries = _currentInstrument.BaseNotes
             .Select((note, index) =>
@@ -275,12 +274,8 @@ public partial class CalibrationPage : ContentPage
         {
             await DisplayAlert(
                 "Calibration saved",
-                $"Saved {notes.Count} calibration tones to {_practiceDataService.GetCalibrationJsonPath(_currentInstrument.InstrumentName)}.",
+                $"Saved {notes.Count} calibration tones.",
                 "OK");
-        }
-        else
-        {
-            CalibrationStorageLabel.Text = $"Saved JSON: {_practiceDataService.GetCalibrationJsonPath(_currentInstrument.InstrumentName)}";
         }
     }
 
@@ -323,5 +318,10 @@ public partial class CalibrationPage : ContentPage
         _notationDrawable.GhostMidiNote = null;
         CalibrationNotationView.WidthRequest = StaffNotationDrawable.GetRequiredWidth(notes.Count);
         CalibrationNotationView.Invalidate();
+    }
+
+    private async void OnHomeClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//home");
     }
 }

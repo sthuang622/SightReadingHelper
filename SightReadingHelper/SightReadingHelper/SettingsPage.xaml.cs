@@ -86,6 +86,11 @@ public partial class SettingsPage : ContentPage
         RenderBaseNoteOptions();
     }
 
+    private async void OnHomeClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//home");
+    }
+
     private void RefreshJumpOptionsForSelectedInstrument()
     {
         if (InstrumentPicker.SelectedItem is not string instrumentName)

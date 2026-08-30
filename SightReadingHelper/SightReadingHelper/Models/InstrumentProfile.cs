@@ -28,5 +28,7 @@ public class InstrumentProfile
 
     public List<int> BeginnerExcludedSemitoneOffsets { get; set; } = [];
 
+    public CalibrationProfile? Calibration { get; set; }
+
     public List<InstrumentNote> BaseNotes { get; set; } = [];
 }

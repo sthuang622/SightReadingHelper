@@ -3,17 +3,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:SightReadingHelper.Models"
              x:Class="SightReadingHelper.CalibrationPage"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
              Title="Calibration">
     <ScrollView>
         <VerticalStackLayout Padding="24,20,24,32"
                              Spacing="16">
+            <HorizontalStackLayout>
+                <Button Text="Home"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Clicked="OnHomeClicked" />
+            </HorizontalStackLayout>
+
             <Border Style="{StaticResource PanelCardStyle}">
                 <VerticalStackLayout Spacing="8">
                     <Label x:Name="CalibrationHeaderLabel"
                            Style="{StaticResource SectionTitleStyle}" />
-                    <Label Text="Play each highlighted tuning note for 1 second. The app saves each captured pitch to the calibration JSON file."
-                           Style="{StaticResource BodyMutedStyle}" />
-                    <Label x:Name="CalibrationStorageLabel"
+                    <Label Text="Play each highlighted tuning note for 1 second. The app saves each captured pitch for practice."
                            Style="{StaticResource BodyMutedStyle}" />
                 </VerticalStackLayout>
             </Border>

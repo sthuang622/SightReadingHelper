@@ -2,10 +2,18 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SightReadingHelper.SettingsPage"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
              Title="Settings">
     <ScrollView>
         <VerticalStackLayout Padding="24,20,24,32"
                              Spacing="16">
+            <HorizontalStackLayout>
+                <Button Text="Home"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Clicked="OnHomeClicked" />
+            </HorizontalStackLayout>
+
             <Border Style="{StaticResource PanelCardStyle}">
                 <VerticalStackLayout Spacing="12">
                     <Label Text="Instrument"
@@ -63,15 +71,6 @@
                     </Grid>
                     <Button Text="Save Settings"
                             Clicked="OnSaveSettingsClicked" />
-                </VerticalStackLayout>
-            </Border>
-
-            <Border Style="{StaticResource PanelCardStyle}">
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Stored Data"
-                           Style="{StaticResource SectionTitleStyle}" />
-                    <Label Text="Tuning notes are bundled with the app in Resources/Raw/instruments.json. Calibration and settings are written to the app data folder as JSON."
-                           Style="{StaticResource BodyMutedStyle}" />
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

@@ -2,10 +2,18 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SightReadingHelper.PracticePage"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
              Title="Practice">
     <ScrollView>
         <VerticalStackLayout Padding="24,20,24,32"
                              Spacing="16">
+            <HorizontalStackLayout>
+                <Button Text="Home"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Clicked="OnHomeClicked" />
+            </HorizontalStackLayout>
+
             <Border Style="{StaticResource PanelCardStyle}">
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Practice Session"
