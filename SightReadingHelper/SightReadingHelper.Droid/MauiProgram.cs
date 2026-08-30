@@ -9,6 +9,8 @@
             builder
                 .UseSharedMauiApp();
 
+            builder.Services.AddSingleton<SightReadingHelper.Services.IAudioInputService, Services.AndroidAudioInputService>();
+
             return builder.Build();
         }
     }

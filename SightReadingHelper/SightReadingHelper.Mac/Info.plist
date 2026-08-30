@@ -10,6 +10,8 @@
     <string>1.0</string>
     <key>CFBundleVersion</key>
     <string>1.0</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Sight Reading Helper listens to your instrument so it can detect pitch during calibration and practice.</string>
     <!-- The App store requires that ITSAppUsesNonExemptEncryption to be set -->
     <!-- Please consult https://developer.apple.com/documentation/bundleresources/information_property_list/itsappusesnonexemptencryption -->
     <!-- <key>ITSAppUsesNonExemptEncryption</key> -->
