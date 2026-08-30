@@ -33,7 +33,10 @@ public partial class SettingsPage : ContentPage
         ExerciseLengthPicker.ItemsSource = GetNumberOptions(_practiceOptions.ExerciseLengths, _settings.ExerciseLength, "notes");
         TolerancePicker.ItemsSource = GetNumberOptions(_practiceOptions.ToleranceCents, _settings.ToleranceCents, "cents");
         BeatTempoPicker.ItemsSource = GetNumberOptions(_practiceOptions.BeatTempoBpms, _settings.BeatTempoBpm, "BPM");
-        MaxBaseNoteJumpPicker.ItemsSource = _practiceOptions.MaxStringJumpLabels;
+        var instrument = _instruments.FirstOrDefault(item => item.InstrumentName == _settings.InstrumentName)
+            ?? _instruments.First();
+        var jumpLabels = GetMaxJumpLabels(_practiceOptions, instrument);
+        MaxBaseNoteJumpPicker.ItemsSource = jumpLabels;
 
         InstrumentPicker.SelectedItem = _settings.InstrumentName;
         ExerciseLengthPicker.SelectedItem = $"{_settings.ExerciseLength} notes";
@@ -42,7 +45,7 @@ public partial class SettingsPage : ContentPage
         MaxBaseNoteJumpPicker.SelectedIndex = Math.Clamp(
             _settings.MaxBaseNoteJump ?? 1,
             0,
-            Math.Max(0, _practiceOptions.MaxStringJumpLabels.Count - 1));
+            Math.Max(0, jumpLabels.Count - 1));
         BeginnerRangeSwitch.IsToggled = _settings.UseBeginnerRange;
         ShowNoteNameSwitch.IsToggled = _settings.ShowNoteName;
         AllowSharpsSwitch.IsToggled = _settings.AllowSharps;
@@ -79,7 +82,29 @@ public partial class SettingsPage : ContentPage
 
     private void OnInstrumentSelectionChanged(object sender, EventArgs e)
     {
+        RefreshJumpOptionsForSelectedInstrument();
         RenderBaseNoteOptions();
+    }
+
+    private void RefreshJumpOptionsForSelectedInstrument()
+    {
+        if (InstrumentPicker.SelectedItem is not string instrumentName)
+        {
+            return;
+        }
+
+        var instrument = _instruments.FirstOrDefault(item => item.InstrumentName == instrumentName);
+        if (instrument is null)
+        {
+            return;
+        }
+
+        var selectedIndex = MaxBaseNoteJumpPicker.SelectedIndex < 0
+            ? _settings.MaxBaseNoteJump ?? 1
+            : MaxBaseNoteJumpPicker.SelectedIndex;
+        var jumpLabels = GetMaxJumpLabels(_practiceOptions, instrument);
+        MaxBaseNoteJumpPicker.ItemsSource = jumpLabels;
+        MaxBaseNoteJumpPicker.SelectedIndex = Math.Clamp(selectedIndex, 0, Math.Max(0, jumpLabels.Count - 1));
     }
 
     private void RenderBaseNoteOptions()
@@ -162,5 +187,12 @@ public partial class SettingsPage : ContentPage
         return values
             .Select(value => $"{value} {suffix}")
             .ToList();
+    }
+
+    private static List<string> GetMaxJumpLabels(PracticeOptionsConfig practiceOptions, InstrumentProfile instrument)
+    {
+        return practiceOptions.MaxTuningNoteJumpLabelsByInstrumentType.TryGetValue(instrument.InstrumentType, out var labels)
+            ? labels
+            : practiceOptions.MaxTuningNoteJumpLabelsByInstrumentType["string"];
     }
 }

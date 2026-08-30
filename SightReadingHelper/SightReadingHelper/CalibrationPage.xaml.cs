@@ -55,20 +55,22 @@ public partial class CalibrationPage : ContentPage
         _currentInstrument = await _practiceDataService.GetSelectedInstrumentAsync();
         var existingCalibration = await _practiceDataService.GetCalibrationAsync(_currentInstrument.InstrumentName);
 
-        CalibrationHeaderLabel.Text = $"{_currentInstrument.InstrumentName} reference tones";
+        CalibrationHeaderLabel.Text = $"{_currentInstrument.InstrumentName} tuning notes";
+        CalibrationStorageLabel.Text = $"JSON: {_practiceDataService.GetCalibrationJsonPath(_currentInstrument.InstrumentName)}";
 
         var entries = _currentInstrument.BaseNotes
             .Select((note, index) =>
             {
-                var existingNote = existingCalibration?.Notes.FirstOrDefault(saved => saved.MidiNote == note.MidiNote);
+                var soundingMidiNote = note.MidiNote + _currentInstrument.SoundingTransposeSemitones;
+                var existingNote = existingCalibration?.Notes.FirstOrDefault(saved => saved.MidiNote == soundingMidiNote);
 
                 return new CalibrationEntryViewModel
                 {
                     ReferenceNumber = index + 1,
                     NoteName = note.NoteName,
-                    MidiNote = note.MidiNote + _currentInstrument.SoundingTransposeSemitones,
+                    MidiNote = soundingMidiNote,
                     DisplayMidiNote = note.MidiNote,
-                    ExpectedFrequencyHz = PitchMath.MidiToFrequency(note.MidiNote + _currentInstrument.SoundingTransposeSemitones),
+                    ExpectedFrequencyHz = PitchMath.MidiToFrequency(soundingMidiNote),
                     MeasuredText = existingNote?.MeasuredFrequencyHz.ToString("0.0", CultureInfo.InvariantCulture) ?? string.Empty
                 };
             })
@@ -215,6 +217,25 @@ public partial class CalibrationPage : ContentPage
         await SaveCalibrationAsync(showConfirmation: true);
     }
 
+    private async void OnUseDefaultCalibrationClicked(object sender, EventArgs e)
+    {
+        if (_currentInstrument is null)
+        {
+            return;
+        }
+
+        foreach (var entry in _entries)
+        {
+            entry.MeasuredText = entry.ExpectedFrequencyHz.ToString("0.0", CultureInfo.InvariantCulture);
+        }
+
+        _currentCalibrationIndex = 0;
+        ResetStableCandidate();
+        RefreshCurrentCalibrationNote();
+        await SaveCalibrationAsync(showConfirmation: false);
+        CalibrationMicrophoneStatusLabel.Text = "Default tuning notes saved.";
+    }
+
     private async Task SaveCalibrationAsync(bool showConfirmation)
     {
         if (_currentInstrument is null)
@@ -252,7 +273,14 @@ public partial class CalibrationPage : ContentPage
 
         if (showConfirmation)
         {
-            await DisplayAlert("Calibration saved", $"Saved {notes.Count} calibration tones for {_currentInstrument.InstrumentName}.", "OK");
+            await DisplayAlert(
+                "Calibration saved",
+                $"Saved {notes.Count} calibration tones to {_practiceDataService.GetCalibrationJsonPath(_currentInstrument.InstrumentName)}.",
+                "OK");
+        }
+        else
+        {
+            CalibrationStorageLabel.Text = $"Saved JSON: {_practiceDataService.GetCalibrationJsonPath(_currentInstrument.InstrumentName)}";
         }
     }
 

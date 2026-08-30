@@ -1,3 +1,4 @@
+using SightReadingHelper.Models;
 using SightReadingHelper.Services;
 
 namespace SightReadingHelper;
@@ -5,6 +6,10 @@ namespace SightReadingHelper;
 public partial class MainPage : ContentPage
 {
     private readonly PracticeDataService _practiceDataService;
+    private IReadOnlyList<InstrumentProfile> _instruments = Array.Empty<InstrumentProfile>();
+    private PracticeOptionsConfig _practiceOptions = new();
+    private PracticeSettings _settings = new();
+    private bool _isLoadingHomeOptions;
 
     public MainPage(PracticeDataService practiceDataService)
     {
@@ -20,23 +25,77 @@ public partial class MainPage : ContentPage
 
     private async Task LoadHomeAsync()
     {
-        var instrument = await _practiceDataService.GetSelectedInstrumentAsync();
+        _isLoadingHomeOptions = true;
+        _instruments = await _practiceDataService.GetInstrumentsAsync();
+        _practiceOptions = await _practiceDataService.GetPracticeOptionsAsync();
+        _settings = await _practiceDataService.GetPracticeSettingsAsync();
+        var instrument = _instruments.FirstOrDefault(item => item.InstrumentName == _settings.InstrumentName)
+            ?? _instruments.First();
         var calibration = await _practiceDataService.GetCalibrationAsync(instrument.InstrumentName);
-        var settings = await _practiceDataService.GetPracticeSettingsAsync();
-        var practiceOptions = await _practiceDataService.GetPracticeOptionsAsync();
-        var upperNoteName = settings.UseBeginnerRange && !string.IsNullOrWhiteSpace(instrument.BeginnerHighestNoteName)
-            ? instrument.BeginnerHighestNoteName
-            : instrument.HighestNoteName;
+
+        LoadQuickOptions(instrument);
 
         SelectedInstrumentLabel.Text = instrument.InstrumentName;
         InstrumentSummaryLabel.Text = $"Built for {instrument.DefaultClef.ToLowerInvariant()} sight-reading and single-note pitch work.";
-        SettingsSummaryLabel.Text = $"{settings.ExerciseLength} notes, ±{settings.ToleranceCents} cents, hold 1 beat at {settings.BeatTempoBpm} BPM, {GetAccidentalModeLabel(settings)}, {(settings.UseBeginnerRange ? "beginner" : "full")} range, {GetBaseJumpLabel(practiceOptions, settings.MaxBaseNoteJump ?? 1).ToLowerInvariant()}, {instrument.BaseNoteGroupLabel}: {GetAllowedBaseNotesLabel(settings, instrument)}.";
         ClefValueLabel.Text = instrument.DefaultClef;
-        RangeValueLabel.Text = $"{PitchMath.ToDisplayNoteName(instrument.LowestNoteName)} to {PitchMath.ToDisplayNoteName(upperNoteName)}";
-        BaseNotesValueLabel.Text = string.Join("  ", instrument.BaseNotes.Select(note => PitchMath.ToAnchorLabel(note.NoteName, instrument.BaseNoteItemSuffix)));
         CalibrationStatusLabel.Text = calibration is null
             ? "Not started"
             : $"{calibration.Notes.Count} notes saved";
+        _isLoadingHomeOptions = false;
+    }
+
+    private void LoadQuickOptions(InstrumentProfile instrument)
+    {
+        HomeInstrumentPicker.ItemsSource = _instruments.Select(item => item.InstrumentName).ToList();
+        HomeBeatTempoPicker.ItemsSource = GetNumberOptions(_practiceOptions.BeatTempoBpms, _settings.BeatTempoBpm, "BPM");
+        var jumpLabels = GetMaxJumpLabels(_practiceOptions, instrument);
+        HomeMaxJumpPicker.ItemsSource = jumpLabels;
+
+        HomeInstrumentPicker.SelectedItem = instrument.InstrumentName;
+        HomeBeatTempoPicker.SelectedItem = $"{_settings.BeatTempoBpm} BPM";
+        HomeMaxJumpPicker.SelectedIndex = Math.Clamp(
+            _settings.MaxBaseNoteJump ?? 1,
+            0,
+            Math.Max(0, jumpLabels.Count - 1));
+        HomeBeginnerRangeSwitch.IsToggled = _settings.UseBeginnerRange;
+    }
+
+    private async void OnHomeOptionChanged(object sender, EventArgs e)
+    {
+        await SaveHomeOptionsAsync();
+    }
+
+    private async void OnHomeOptionToggled(object sender, ToggledEventArgs e)
+    {
+        await SaveHomeOptionsAsync();
+    }
+
+    private async Task SaveHomeOptionsAsync()
+    {
+        if (_isLoadingHomeOptions
+            || HomeInstrumentPicker.SelectedItem is not string instrumentName
+            || HomeBeatTempoPicker.SelectedItem is not string beatTempo
+            || HomeMaxJumpPicker.SelectedIndex < 0)
+        {
+            return;
+        }
+
+        _settings = new PracticeSettings
+        {
+            InstrumentName = instrumentName,
+            ExerciseLength = _settings.ExerciseLength,
+            ToleranceCents = _settings.ToleranceCents,
+            BeatTempoBpm = int.Parse(beatTempo.Split(' ')[0]),
+            MaxBaseNoteJump = HomeMaxJumpPicker.SelectedIndex,
+            AllowedBaseNoteNames = _settings.AllowedBaseNoteNames,
+            UseBeginnerRange = HomeBeginnerRangeSwitch.IsToggled,
+            AllowSharps = _settings.AllowSharps,
+            AvoidOpenStringSharps = _settings.AvoidOpenStringSharps,
+            ShowNoteName = _settings.ShowNoteName
+        };
+
+        await _practiceDataService.SavePracticeSettingsAsync(_settings);
+        await LoadHomeAsync();
     }
 
     private async void OnOpenPracticeClicked(object sender, EventArgs e)
@@ -54,27 +113,27 @@ public partial class MainPage : ContentPage
         await Shell.Current.GoToAsync("//settings");
     }
 
-    private static string GetBaseJumpLabel(Models.PracticeOptionsConfig practiceOptions, int maxBaseNoteJump)
+    private static List<string> GetNumberOptions(
+        IEnumerable<int> configuredValues,
+        int selectedValue,
+        string suffix)
     {
-        return maxBaseNoteJump >= 0 && maxBaseNoteJump < practiceOptions.MaxStringJumpLabels.Count
-            ? practiceOptions.MaxStringJumpLabels[maxBaseNoteJump]
-            : practiceOptions.MaxStringJumpLabels.Last();
-    }
+        var values = new SortedSet<int>(configuredValues.Where(value => value > 0));
 
-    private static string GetAllowedBaseNotesLabel(Models.PracticeSettings settings, Models.InstrumentProfile instrument)
-    {
-        return settings.AllowedBaseNoteNames.Count == 0
-            ? "all"
-            : string.Join(", ", settings.AllowedBaseNoteNames.Select(noteName => PitchMath.ToAnchorLabel(noteName, instrument.BaseNoteItemSuffix)));
-    }
-
-    private static string GetAccidentalModeLabel(Models.PracticeSettings settings)
-    {
-        if (!settings.AllowSharps)
+        if (selectedValue > 0)
         {
-            return "natural notes only";
+            values.Add(selectedValue);
         }
 
-        return settings.AvoidOpenStringSharps ? "no open-string sharps" : "sharps allowed";
+        return values
+            .Select(value => $"{value} {suffix}")
+            .ToList();
+    }
+
+    private static List<string> GetMaxJumpLabels(Models.PracticeOptionsConfig practiceOptions, Models.InstrumentProfile instrument)
+    {
+        return practiceOptions.MaxTuningNoteJumpLabelsByInstrumentType.TryGetValue(instrument.InstrumentType, out var labels)
+            ? labels
+            : practiceOptions.MaxTuningNoteJumpLabelsByInstrumentType["string"];
     }
 }

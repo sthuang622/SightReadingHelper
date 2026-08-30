@@ -11,7 +11,9 @@
                 <VerticalStackLayout Spacing="8">
                     <Label x:Name="CalibrationHeaderLabel"
                            Style="{StaticResource SectionTitleStyle}" />
-                    <Label Text="Play each string shown below for 1 second. The app saves the measured pitch once the microphone hears it close to the target."
+                    <Label Text="Play each highlighted tuning note for 1 second. The app saves each captured pitch to the calibration JSON file."
+                           Style="{StaticResource BodyMutedStyle}" />
+                    <Label x:Name="CalibrationStorageLabel"
                            Style="{StaticResource BodyMutedStyle}" />
                 </VerticalStackLayout>
             </Border>
@@ -22,7 +24,7 @@
                            Style="{StaticResource SectionTitleStyle}" />
                     <ScrollView Orientation="Horizontal">
                         <GraphicsView x:Name="CalibrationNotationView"
-                                      HeightRequest="160" />
+                                      HeightRequest="220" />
                     </ScrollView>
                     <Label x:Name="CurrentExpectedPitchLabel"
                            Style="{StaticResource BodyTextStyle}" />
@@ -42,6 +44,9 @@
                         <Button Text="Next"
                                 Style="{StaticResource SecondaryButtonStyle}"
                                 Clicked="OnNextCalibrationNoteClicked" />
+                        <Button Text="Default"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Clicked="OnUseDefaultCalibrationClicked" />
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
             </Border>
@@ -63,8 +68,13 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <Button Text="Save Calibration"
-                    Clicked="OnSaveCalibrationClicked" />
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="Save Calibration"
+                        Clicked="OnSaveCalibrationClicked" />
+                <Button Text="Use Defaults"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Clicked="OnUseDefaultCalibrationClicked" />
+            </HorizontalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

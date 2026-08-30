@@ -4,6 +4,8 @@ public class InstrumentProfile
 {
     public string InstrumentName { get; set; } = string.Empty;
 
+    public string InstrumentType { get; set; } = "string";
+
     public string DefaultClef { get; set; } = string.Empty;
 
     public int SoundingTransposeSemitones { get; set; }

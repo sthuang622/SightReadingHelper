@@ -5,7 +5,7 @@ namespace SightReadingHelper.Controls;
 
 public class StaffNotationDrawable : IDrawable
 {
-    private const float StaffTop = 78;
+    private const float StaffTop = 104;
     private const float LineSpacing = 14;
     private const float NoteSpacing = 58;
     private const float FirstNoteX = 82;
@@ -20,12 +20,15 @@ public class StaffNotationDrawable : IDrawable
 
     public int? GhostMidiNote { get; set; }
 
+    public double HoldProgress { get; set; }
+
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
         canvas.FillColor = Color.FromArgb("#FFFDF8");
         canvas.FillRectangle(dirtyRect);
 
         DrawCurrentNoteHighlight(canvas);
+        DrawHoldProgressBar(canvas);
         DrawStaff(canvas, dirtyRect);
         DrawClef(canvas);
 
@@ -90,6 +93,34 @@ public class StaffNotationDrawable : IDrawable
 
         canvas.FillColor = Color.FromRgba(245, 211, 111, 90);
         canvas.FillRoundedRectangle(x - 18, StaffTop - 24, 46, (LineSpacing * 4) + 48, 12);
+    }
+
+    private void DrawHoldProgressBar(ICanvas canvas)
+    {
+        if (CurrentNoteIndex < 0 || CurrentNoteIndex >= Notes.Count)
+        {
+            return;
+        }
+
+        var progress = (float)Math.Clamp(HoldProgress, 0, 1);
+        var x = FirstNoteX + (CurrentNoteIndex * NoteSpacing);
+        var barX = x - 24;
+        var barY = StaffTop - 43;
+        const float barWidth = 52;
+        const float barHeight = 7;
+
+        canvas.FillColor = Color.FromRgba(38, 35, 30, 38);
+        canvas.FillRoundedRectangle(barX, barY, barWidth, barHeight, 4);
+
+        if (progress <= 0)
+        {
+            return;
+        }
+
+        canvas.FillColor = progress >= 1
+            ? Color.FromRgba(247, 180, 43, 230)
+            : Color.FromRgba(31, 92, 74, 210);
+        canvas.FillRoundedRectangle(barX, barY, barWidth * progress, barHeight, 4);
     }
 
     private void DrawNote(ICanvas canvas, ExerciseNote note, int index, bool isComplete)

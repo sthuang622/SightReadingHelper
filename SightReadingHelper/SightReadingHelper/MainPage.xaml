@@ -4,26 +4,84 @@
              x:Class="SightReadingHelper.MainPage"
              Title="Home">
     <ScrollView>
-        <VerticalStackLayout Padding="24,20,24,32"
-                             Spacing="20">
-            <Border Background="{StaticResource SurfaceBrush}"
-                    Stroke="{StaticResource AccentBrush}"
-                    StrokeThickness="2"
+        <VerticalStackLayout Padding="20,18,20,30"
+                             Spacing="16">
+            <Border Stroke="{StaticResource AccentBrush}"
+                    StrokeThickness="0"
                     Padding="24">
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="Sight Reading Helper"
-                           Style="{StaticResource HeroTitleStyle}" />
-                    <Label x:Name="SelectedInstrumentLabel"
-                           Style="{StaticResource SectionTitleStyle}" />
-                    <Label x:Name="InstrumentSummaryLabel"
-                           Style="{StaticResource BodyMutedStyle}" />
-                    <Label x:Name="SettingsSummaryLabel"
-                           Style="{StaticResource BodyTextStyle}" />
-                </VerticalStackLayout>
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0"
+                                         EndPoint="1,1">
+                        <GradientStop Color="{StaticResource PrimaryDarkText}"
+                                      Offset="0" />
+                        <GradientStop Color="{StaticResource Primary}"
+                                      Offset="0.65" />
+                        <GradientStop Color="{StaticResource Accent}"
+                                      Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="28" />
+                </Border.StrokeShape>
+                <Grid RowDefinitions="Auto,Auto,Auto"
+                      ColumnDefinitions="*,Auto"
+                      ColumnSpacing="14"
+                      RowSpacing="10">
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Text="Sight Reading Helper"
+                           FontSize="36"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource White}" />
+                    <Border Grid.Row="0"
+                            Grid.Column="1"
+                            Padding="12,7"
+                            VerticalOptions="Start"
+                            Background="{StaticResource SecondaryBrush}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="18" />
+                        </Border.StrokeShape>
+                        <Label Text="LIVE MIC"
+                               FontSize="11"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource PrimaryDarkText}" />
+                    </Border>
+
+                    <Label Grid.Row="1"
+                           Grid.ColumnSpan="2"
+                           x:Name="SelectedInstrumentLabel"
+                           FontSize="24"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource Secondary}" />
+                    <Label Grid.Row="2"
+                           Grid.ColumnSpan="2"
+                           x:Name="InstrumentSummaryLabel"
+                           FontSize="15"
+                           LineHeight="1.25"
+                           TextColor="{StaticResource White}" />
+                </Grid>
             </Border>
 
             <Grid ColumnDefinitions="*,*"
-                  RowDefinitions="Auto,Auto"
+                  ColumnSpacing="12"
+                  RowSpacing="12">
+                <Button Grid.Column="0"
+                        Text="Start Practice"
+                        FontSize="17"
+                        FontFamily="OpenSansSemibold"
+                        Padding="18,15"
+                        Clicked="OnOpenPracticeClicked" />
+                <Button Grid.Column="1"
+                        Text="Calibrate"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        FontSize="17"
+                        FontFamily="OpenSansSemibold"
+                        Padding="18,15"
+                        Clicked="OnOpenCalibrationClicked" />
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*"
+                  RowDefinitions="Auto"
                   ColumnSpacing="12"
                   RowSpacing="12">
                 <Border Grid.Row="0"
@@ -41,28 +99,6 @@
                         Grid.Column="1"
                         Style="{StaticResource StatusCardStyle}">
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="Exercise Range"
-                               Style="{StaticResource EyebrowStyle}" />
-                        <Label x:Name="RangeValueLabel"
-                               Style="{StaticResource StatValueStyle}" />
-                    </VerticalStackLayout>
-                </Border>
-
-                <Border Grid.Row="1"
-                        Grid.Column="0"
-                        Style="{StaticResource StatusCardStyle}">
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="Base Notes"
-                               Style="{StaticResource EyebrowStyle}" />
-                        <Label x:Name="BaseNotesValueLabel"
-                               Style="{StaticResource StatValueStyle}" />
-                    </VerticalStackLayout>
-                </Border>
-
-                <Border Grid.Row="1"
-                        Grid.Column="1"
-                        Style="{StaticResource StatusCardStyle}">
-                    <VerticalStackLayout Spacing="6">
                         <Label Text="Calibration"
                                Style="{StaticResource EyebrowStyle}" />
                         <Label x:Name="CalibrationStatusLabel"
@@ -72,21 +108,74 @@
             </Grid>
 
             <Border Style="{StaticResource PanelCardStyle}">
-                <VerticalStackLayout Spacing="12">
-                    <Label Text="MVP Flow"
-                           Style="{StaticResource SectionTitleStyle}" />
-                    <Label Text="Choose an instrument, save calibration notes, generate an exercise, enter the detected pitch, and advance when the note is correct."
-                           Style="{StaticResource BodyTextStyle}" />
-                    <HorizontalStackLayout Spacing="10">
-                        <Button Text="Start Practice"
-                                Clicked="OnOpenPracticeClicked" />
-                        <Button Text="Calibration"
-                                Style="{StaticResource SecondaryButtonStyle}"
-                                Clicked="OnOpenCalibrationClicked" />
-                        <Button Text="Settings"
+                <VerticalStackLayout Spacing="14">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0"
+                                             Spacing="3">
+                            <Label Text="Quick Setup"
+                                   Style="{StaticResource SectionTitleStyle}" />
+                            <Label Text="Tune the session before jumping in."
+                                   Style="{StaticResource BodyMutedStyle}" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1"
+                                Text="More"
                                 Style="{StaticResource SecondaryButtonStyle}"
                                 Clicked="OnOpenSettingsClicked" />
-                    </HorizontalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*"
+                          RowDefinitions="Auto,Auto"
+                          ColumnSpacing="12"
+                          RowSpacing="12">
+                        <Border Grid.Row="0"
+                                Grid.Column="0"
+                                Style="{StaticResource StatusCardStyle}">
+                            <VerticalStackLayout Spacing="3">
+                                <Label Text="Instrument"
+                                       Style="{StaticResource EyebrowStyle}" />
+                                <Picker x:Name="HomeInstrumentPicker"
+                                        Title="Instrument"
+                                        SelectedIndexChanged="OnHomeOptionChanged" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Row="0"
+                                Grid.Column="1"
+                                Style="{StaticResource StatusCardStyle}">
+                            <VerticalStackLayout Spacing="3">
+                                <Label Text="Hold"
+                                       Style="{StaticResource EyebrowStyle}" />
+                                <Picker x:Name="HomeBeatTempoPicker"
+                                        Title="Hold tempo"
+                                        SelectedIndexChanged="OnHomeOptionChanged" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Row="1"
+                                Grid.ColumnSpan="2"
+                                Style="{StaticResource StatusCardStyle}">
+                            <VerticalStackLayout Spacing="3">
+                                <Label Text="Movement"
+                                       Style="{StaticResource EyebrowStyle}" />
+                                <Picker x:Name="HomeMaxJumpPicker"
+                                        Title="Maximum tuning-note jump"
+                                        SelectedIndexChanged="OnHomeOptionChanged" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <Border Style="{StaticResource StatusCardStyle}">
+                        <Grid ColumnDefinitions="*,Auto"
+                              ColumnSpacing="8">
+                            <Label Grid.Column="0"
+                                   Text="Use beginner range"
+                                   Style="{StaticResource BodyTextStyle}"
+                                   VerticalOptions="Center" />
+                            <Switch Grid.Column="1"
+                                    x:Name="HomeBeginnerRangeSwitch"
+                                    Toggled="OnHomeOptionToggled" />
+                        </Grid>
+                    </Border>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

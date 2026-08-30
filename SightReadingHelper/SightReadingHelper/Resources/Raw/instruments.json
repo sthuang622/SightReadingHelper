@@ -1,6 +1,7 @@
 [
   {
     "instrumentName": "Viola",
+    "instrumentType": "string",
     "defaultClef": "Alto clef",
     "soundingTransposeSemitones": 0,
     "baseNoteGroupLabel": "tuning notes",
@@ -36,6 +37,7 @@
   },
   {
     "instrumentName": "Violin",
+    "instrumentType": "string",
     "defaultClef": "Treble clef",
     "soundingTransposeSemitones": 0,
     "baseNoteGroupLabel": "tuning notes",
@@ -71,6 +73,7 @@
   },
   {
     "instrumentName": "French Horn",
+    "instrumentType": "brass",
     "defaultClef": "Treble clef",
     "soundingTransposeSemitones": -7,
     "baseNoteGroupLabel": "tuning notes",

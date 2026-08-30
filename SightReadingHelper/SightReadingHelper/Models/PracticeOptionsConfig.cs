@@ -6,13 +6,23 @@ public class PracticeOptionsConfig
 
     public List<int> ToleranceCents { get; set; } = [50, 30, 15];
 
-    public List<int> BeatTempoBpms { get; set; } = [60, 80, 100, 120];
+    public List<int> BeatTempoBpms { get; set; } = [30, 60, 90, 120];
 
-    public List<string> MaxStringJumpLabels { get; set; } =
-    [
-        "Same string only",
-        "Adjacent strings only",
-        "Skip one string",
-        "Any string"
-    ];
+    public Dictionary<string, List<string>> MaxTuningNoteJumpLabelsByInstrumentType { get; set; } = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["string"] =
+        [
+            "Same string only",
+            "Adjacent strings only",
+            "Skip one string",
+            "Any string"
+        ],
+        ["brass"] =
+        [
+            "Same tuning note only",
+            "Nearby tuning notes only",
+            "Wider tuning-note jumps",
+            "Any tuning note"
+        ]
+    };
 }

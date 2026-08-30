@@ -91,6 +91,11 @@ public class PracticeDataService
         await File.WriteAllTextAsync(path, JsonSerializer.Serialize(calibration, _serializerOptions));
     }
 
+    public string GetCalibrationJsonPath(string instrumentName)
+    {
+        return GetCalibrationPath(instrumentName);
+    }
+
     private static string GetSettingsPath()
     {
         return Path.Combine(FileSystem.Current.AppDataDirectory, "Data", SettingsFileName);
@@ -141,12 +146,33 @@ public class PracticeDataService
 
         if (options.BeatTempoBpms.Count == 0)
         {
-            options.BeatTempoBpms = [60, 80, 100, 120];
+            options.BeatTempoBpms = [30, 60, 90, 120];
         }
 
-        if (options.MaxStringJumpLabels.Count == 0)
+        if (options.MaxTuningNoteJumpLabelsByInstrumentType.Count == 0)
         {
-            options.MaxStringJumpLabels =
+            options.MaxTuningNoteJumpLabelsByInstrumentType = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["string"] =
+                [
+                    "Same string only",
+                    "Adjacent strings only",
+                    "Skip one string",
+                    "Any string"
+                ],
+                ["brass"] =
+                [
+                    "Same tuning note only",
+                    "Nearby tuning notes only",
+                    "Wider tuning-note jumps",
+                    "Any tuning note"
+                ]
+            };
+        }
+
+        if (!options.MaxTuningNoteJumpLabelsByInstrumentType.ContainsKey("string"))
+        {
+            options.MaxTuningNoteJumpLabelsByInstrumentType["string"] =
             [
                 "Same string only",
                 "Adjacent strings only",

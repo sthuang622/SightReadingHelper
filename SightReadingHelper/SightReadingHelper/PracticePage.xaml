@@ -19,7 +19,7 @@
 
             <Border Style="{StaticResource PanelCardStyle}">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Exercise"
+                    <Label Text="Endless Practice"
                            Style="{StaticResource SectionTitleStyle}" />
                     <ProgressBar x:Name="ExerciseProgressBar"
                                  Progress="0" />
@@ -27,7 +27,7 @@
                            Style="{StaticResource BodyMutedStyle}" />
                     <ScrollView Orientation="Horizontal">
                         <GraphicsView x:Name="NotationView"
-                                      HeightRequest="210"
+                                      HeightRequest="250"
                                       WidthRequest="720" />
                     </ScrollView>
                 </VerticalStackLayout>
@@ -52,39 +52,18 @@
                                  Progress="0" />
                     <Label x:Name="MicrophoneStatusLabel"
                            Style="{StaticResource BodyMutedStyle}" />
-                    <HorizontalStackLayout Spacing="10">
-                        <Button x:Name="StartListeningButton"
-                                Text="Start Listening"
-                                Clicked="OnStartListeningClicked" />
-                        <Button x:Name="StopListeningButton"
-                                Text="Stop"
-                                Style="{StaticResource SecondaryButtonStyle}"
-                                IsEnabled="False"
-                                Clicked="OnStopListeningClicked" />
-                    </HorizontalStackLayout>
                     <Label x:Name="JudgmentLabel"
                            Style="{StaticResource BodyTextStyle}" />
                 </VerticalStackLayout>
             </Border>
 
             <HorizontalStackLayout Spacing="10">
-                <Button Text="Generate Exercise"
+                <Button Text="New Session"
                         Clicked="OnGenerateExerciseClicked" />
                 <Button Text="Restart"
                         Style="{StaticResource SecondaryButtonStyle}"
                         Clicked="OnRestartExerciseClicked" />
             </HorizontalStackLayout>
-
-            <Border Style="{StaticResource PanelCardStyle}">
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="MusicXML Preview"
-                           Style="{StaticResource SectionTitleStyle}" />
-                    <Editor x:Name="MusicXmlEditor"
-                            HeightRequest="240"
-                            IsReadOnly="True"
-                            AutoSize="TextChanges" />
-                </VerticalStackLayout>
-            </Border>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
