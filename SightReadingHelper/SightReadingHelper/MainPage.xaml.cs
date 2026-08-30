@@ -132,7 +132,7 @@ public partial class MainPage : ContentPage
 
     private async void OnOpenPracticeClicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("//practice");
+        await Shell.Current.GoToAsync("//practice?newSession=true");
     }
 
     private async void OnOpenCalibrationClicked(object sender, EventArgs e)

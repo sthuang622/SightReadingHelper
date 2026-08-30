@@ -21,11 +21,14 @@
                 </Border.StrokeShape>
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                     <VerticalStackLayout Spacing="3">
-                        <Label Text="Practice"
+                        <Label Text="Practice Session"
                                FontSize="30"
                                FontFamily="OpenSansSemibold"
                                TextColor="{StaticResource White}" />
-                        <Label Text="Play through an endless stream of notes"
+                        <Label x:Name="PracticeSummaryLabel"
+                               Style="{StaticResource BodyTextStyle}"
+                               TextColor="{StaticResource White}" />
+                        <Label x:Name="PracticeSettingsLabel"
                                Style="{StaticResource BodyMutedStyle}"
                                TextColor="{StaticResource White}" />
                     </VerticalStackLayout>
@@ -33,17 +36,6 @@
                             Style="{StaticResource SecondaryButtonStyle}"
                             Clicked="OnHomeClicked" />
                 </Grid>
-            </Border>
-
-            <Border Style="{StaticResource PanelCardStyle}">
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Practice Session"
-                           Style="{StaticResource SectionTitleStyle}" />
-                    <Label x:Name="PracticeSummaryLabel"
-                           Style="{StaticResource BodyTextStyle}" />
-                    <Label x:Name="PracticeSettingsLabel"
-                           Style="{StaticResource BodyMutedStyle}" />
-                </VerticalStackLayout>
             </Border>
 
             <Border Style="{StaticResource PanelCardStyle}">
@@ -62,7 +54,8 @@
                 </VerticalStackLayout>
             </Border>
 
-            <Border Style="{StaticResource PanelCardStyle}">
+            <Border x:Name="CurrentPitchTargetCard"
+                    Style="{StaticResource PanelCardStyle}">
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Current Pitch Target"
                            Style="{StaticResource SectionTitleStyle}" />
@@ -86,7 +79,8 @@
                 </VerticalStackLayout>
             </Border>
 
-            <HorizontalStackLayout Spacing="10">
+            <HorizontalStackLayout x:Name="PracticeActionsLayout"
+                                   Spacing="10">
                 <Button Text="New Session"
                         Clicked="OnGenerateExerciseClicked" />
                 <Button Text="Restart"

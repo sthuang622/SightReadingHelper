@@ -77,7 +77,7 @@ public partial class SettingsPage : ContentPage
         };
 
         await _practiceDataService.SavePracticeSettingsAsync(settings);
-        await DisplayAlert("Settings updated", $"Saved the MVP practice defaults for {instrumentName}.", "OK");
+        await DisplayAlert("Saved", "Saved.", "OK");
     }
 
     private void OnInstrumentSelectionChanged(object sender, EventArgs e)
