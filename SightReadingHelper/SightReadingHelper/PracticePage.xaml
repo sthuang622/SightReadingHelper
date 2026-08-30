@@ -6,13 +6,34 @@
              Shell.TabBarIsVisible="False"
              Title="Practice">
     <ScrollView>
-        <VerticalStackLayout Padding="24,20,24,32"
+        <VerticalStackLayout Padding="20,18,20,30"
                              Spacing="16">
-            <HorizontalStackLayout>
-                <Button Text="Home"
-                        Style="{StaticResource SecondaryButtonStyle}"
-                        Clicked="OnHomeClicked" />
-            </HorizontalStackLayout>
+            <Border Padding="22,18">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="{StaticResource PrimaryDarkText}" Offset="0" />
+                        <GradientStop Color="{StaticResource Primary}" Offset="0.7" />
+                        <GradientStop Color="{StaticResource Accent}" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="24" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="Practice"
+                               FontSize="30"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource White}" />
+                        <Label Text="Play through an endless stream of notes"
+                               Style="{StaticResource BodyMutedStyle}"
+                               TextColor="{StaticResource White}" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1" Text="Home"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Clicked="OnHomeClicked" />
+                </Grid>
+            </Border>
 
             <Border Style="{StaticResource PanelCardStyle}">
                 <VerticalStackLayout Spacing="8">

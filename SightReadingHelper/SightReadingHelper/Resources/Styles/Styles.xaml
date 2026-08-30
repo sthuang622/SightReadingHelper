@@ -223,7 +223,7 @@
     </Style>
 
     <Style TargetType="Border" x:Key="PanelCardStyle">
-        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource WhiteBrush}, Dark={StaticResource Gray950Brush}}" />
+        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource HomeCardSurfaceBrush}, Dark={StaticResource Gray900Brush}}" />
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource SurfaceStrong}, Dark={StaticResource Gray600}}" />
         <Setter Property="StrokeThickness" Value="1" />
         <Setter Property="Padding" Value="18" />
