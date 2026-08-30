@@ -147,6 +147,12 @@ public partial class MainPage : ContentPage
 
     private void AttachHoverEffects()
     {
+        if (DeviceInfo.Current.Platform == DevicePlatform.Android
+            || DeviceInfo.Current.Platform == DevicePlatform.iOS)
+        {
+            return;
+        }
+
         AttachButtonHoverEffect(
             StartPracticeButton,
             GetColor("Primary"),
