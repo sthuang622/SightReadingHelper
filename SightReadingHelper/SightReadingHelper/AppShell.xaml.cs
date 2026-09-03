@@ -6,6 +6,7 @@ public partial class AppShell : Shell
         MainPage mainPage,
         CalibrationPage calibrationPage,
         PracticePage practicePage,
+        MusicXmlPage musicXmlPage,
         SettingsPage settingsPage)
     {
         InitializeComponent();
@@ -17,6 +18,7 @@ public partial class AppShell : Shell
                 CreateShellContent("Home", "home", mainPage),
                 CreateShellContent("Calibration", "calibration", calibrationPage),
                 CreateShellContent("Practice", "practice", practicePage),
+                CreateShellContent("MusicXML", "musicxml", musicXmlPage),
                 CreateShellContent("Settings", "settings", settingsPage)
             }
         });

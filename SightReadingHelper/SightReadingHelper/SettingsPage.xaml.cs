@@ -10,6 +10,7 @@ public partial class SettingsPage : ContentPage
     private PracticeOptionsConfig _practiceOptions = new();
     private PracticeSettings _settings = new();
     private readonly Dictionary<string, CheckBox> _baseNoteCheckBoxes = [];
+    private bool? _isCompactLayout;
 
     public SettingsPage(PracticeDataService practiceDataService)
     {
@@ -21,6 +22,58 @@ public partial class SettingsPage : ContentPage
     {
         base.OnAppearing();
         await LoadSettingsAsync();
+    }
+
+    protected override void OnSizeAllocated(double width, double height)
+    {
+        base.OnSizeAllocated(width, height);
+        ApplyResponsiveLayout(width);
+    }
+
+    private void ApplyResponsiveLayout(double width)
+    {
+        var isCompact = width > 0 && width < 720;
+        if (_isCompactLayout == isCompact)
+        {
+            return;
+        }
+
+        _isCompactLayout = isCompact;
+        SettingsTitleLabel.FontSize = isCompact ? 26 : 30;
+
+        SettingsHeaderGrid.ColumnDefinitions.Clear();
+        SettingsHeaderGrid.RowDefinitions.Clear();
+
+        if (isCompact)
+        {
+            SettingsHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            SettingsHeaderGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            SettingsHeaderGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var homeButton = SettingsHeaderGrid.Children.OfType<Button>().FirstOrDefault();
+            if (homeButton is not null)
+            {
+                Grid.SetRow(homeButton, 1);
+                Grid.SetColumn(homeButton, 0);
+                homeButton.HorizontalOptions = LayoutOptions.Start;
+                homeButton.Margin = new Thickness(0, 10, 0, 0);
+            }
+
+            return;
+        }
+
+        SettingsHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+        SettingsHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        SettingsHeaderGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+        var desktopHomeButton = SettingsHeaderGrid.Children.OfType<Button>().FirstOrDefault();
+        if (desktopHomeButton is not null)
+        {
+            Grid.SetRow(desktopHomeButton, 0);
+            Grid.SetColumn(desktopHomeButton, 1);
+            desktopHomeButton.HorizontalOptions = LayoutOptions.Fill;
+            desktopHomeButton.Margin = Thickness.Zero;
+        }
     }
 
     private async Task LoadSettingsAsync()
@@ -69,13 +122,18 @@ public partial class SettingsPage : ContentPage
             ExerciseLength = int.Parse(exerciseLength.Split(' ')[0]),
             ToleranceCents = int.Parse(tolerance.Split(' ')[0]),
             BeatTempoBpm = int.Parse(beatTempo.Split(' ')[0]),
+            GeneratedBeatDurations = _settings.GeneratedBeatDurations,
             MaxBaseNoteJump = MaxBaseNoteJumpPicker.SelectedIndex,
             AllowedBaseNoteNames = GetSelectedBaseNoteNames(),
             UseBeginnerRange = BeginnerRangeSwitch.IsToggled,
             AllowSharps = AllowSharpsSwitch.IsToggled,
-            ShowNoteName = ShowNoteNameSwitch.IsToggled
+            AvoidOpenStringSharps = _settings.AvoidOpenStringSharps,
+            ShowNoteName = ShowNoteNameSwitch.IsToggled,
+            UseCustomMusicXmlLoop = _settings.UseCustomMusicXmlLoop,
+            CustomMusicXml = string.Empty
         };
 
+        _settings = settings;
         await _practiceDataService.SavePracticeSettingsAsync(settings);
         await DisplayAlert("Saved", "Saved.", "OK");
     }
@@ -199,5 +257,39 @@ public partial class SettingsPage : ContentPage
         return practiceOptions.MaxTuningNoteJumpLabelsByInstrumentType.TryGetValue(instrument.InstrumentType, out var labels)
             ? labels
             : practiceOptions.MaxTuningNoteJumpLabelsByInstrumentType["string"];
+    }
+
+    private PracticeSettings GetSettingsFromControls(string customMusicXml)
+    {
+        return new PracticeSettings
+        {
+            InstrumentName = InstrumentPicker.SelectedItem as string ?? _settings.InstrumentName,
+            ExerciseLength = ParseSelectedNumber(ExerciseLengthPicker.SelectedItem as string, _settings.ExerciseLength),
+            ToleranceCents = ParseSelectedNumber(TolerancePicker.SelectedItem as string, _settings.ToleranceCents),
+            BeatTempoBpm = ParseSelectedNumber(BeatTempoPicker.SelectedItem as string, _settings.BeatTempoBpm),
+            GeneratedBeatDurations = _settings.GeneratedBeatDurations,
+            MaxBaseNoteJump = MaxBaseNoteJumpPicker.SelectedIndex >= 0
+                ? MaxBaseNoteJumpPicker.SelectedIndex
+                : _settings.MaxBaseNoteJump,
+            AllowedBaseNoteNames = GetSelectedBaseNoteNames(),
+            UseBeginnerRange = BeginnerRangeSwitch.IsToggled,
+            AllowSharps = AllowSharpsSwitch.IsToggled,
+            AvoidOpenStringSharps = _settings.AvoidOpenStringSharps,
+            ShowNoteName = ShowNoteNameSwitch.IsToggled,
+            UseCustomMusicXmlLoop = _settings.UseCustomMusicXmlLoop,
+            CustomMusicXml = customMusicXml
+        };
+    }
+
+    private static int ParseSelectedNumber(string? selectedValue, int fallbackValue)
+    {
+        if (string.IsNullOrWhiteSpace(selectedValue))
+        {
+            return fallbackValue;
+        }
+
+        return int.TryParse(selectedValue.Split(' ')[0], out var parsedValue)
+            ? parsedValue
+            : fallbackValue;
     }
 }

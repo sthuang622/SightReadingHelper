@@ -19,9 +19,12 @@
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="24" />
                 </Border.StrokeShape>
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Grid x:Name="PracticeHeaderGrid"
+                      ColumnDefinitions="*,Auto"
+                      ColumnSpacing="12">
                     <VerticalStackLayout Spacing="3">
                         <Label Text="Practice Session"
+                               x:Name="PracticeTitleLabel"
                                FontSize="30"
                                FontFamily="OpenSansSemibold"
                                TextColor="{StaticResource White}" />
@@ -79,14 +82,19 @@
                 </VerticalStackLayout>
             </Border>
 
-            <HorizontalStackLayout x:Name="PracticeActionsLayout"
-                                   Spacing="10">
+            <FlexLayout x:Name="PracticeActionsLayout"
+                        Direction="Row"
+                        Wrap="Wrap"
+                        AlignItems="Start"
+                        JustifyContent="Start">
                 <Button Text="New Session"
+                        Margin="0,0,10,10"
                         Clicked="OnGenerateExerciseClicked" />
                 <Button Text="Restart"
                         Style="{StaticResource SecondaryButtonStyle}"
+                        Margin="0,0,10,10"
                         Clicked="OnRestartExerciseClicked" />
-            </HorizontalStackLayout>
+            </FlexLayout>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

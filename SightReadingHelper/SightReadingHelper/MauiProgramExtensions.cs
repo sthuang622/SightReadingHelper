@@ -27,6 +27,7 @@ public static class MauiProgramExtensions
         builder.Services.AddTransient<MainPage>();
         builder.Services.AddTransient<CalibrationPage>();
         builder.Services.AddTransient<PracticePage>();
+        builder.Services.AddTransient<MusicXmlPage>();
         builder.Services.AddTransient<SettingsPage>();
 
 #if DEBUG

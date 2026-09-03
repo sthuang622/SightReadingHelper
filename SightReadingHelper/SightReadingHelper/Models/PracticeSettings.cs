@@ -10,6 +10,8 @@ public class PracticeSettings
 
     public int BeatTempoBpm { get; set; } = 60;
 
+    public List<double> GeneratedBeatDurations { get; set; } = [1];
+
     public int? MaxBaseNoteJump { get; set; } = 1;
 
     public List<string> AllowedBaseNoteNames { get; set; } = [];
@@ -21,4 +23,8 @@ public class PracticeSettings
     public bool AvoidOpenStringSharps { get; set; } = true;
 
     public bool ShowNoteName { get; set; } = false;
+
+    public bool UseCustomMusicXmlLoop { get; set; } = false;
+
+    public string CustomMusicXml { get; set; } = string.Empty;
 }

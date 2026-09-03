@@ -5,11 +5,15 @@ namespace SightReadingHelper;
 
 public partial class MainPage : ContentPage
 {
+    private const string GeneratedPracticeMode = "Generated notes";
+    private const string MusicXmlLoopMode = "MusicXML loop";
+
     private readonly PracticeDataService _practiceDataService;
     private IReadOnlyList<InstrumentProfile> _instruments = Array.Empty<InstrumentProfile>();
     private PracticeOptionsConfig _practiceOptions = new();
     private PracticeSettings _settings = new();
     private bool _isLoadingHomeOptions;
+    private bool? _isCompactLayout;
 
     public MainPage(PracticeDataService practiceDataService)
     {
@@ -22,6 +26,103 @@ public partial class MainPage : ContentPage
     {
         base.OnAppearing();
         await LoadHomeAsync();
+    }
+
+    protected override void OnSizeAllocated(double width, double height)
+    {
+        base.OnSizeAllocated(width, height);
+        ApplyResponsiveLayout(width);
+    }
+
+    private void ApplyResponsiveLayout(double width)
+    {
+        var isCompact = width > 0 && width < 720;
+        if (_isCompactLayout == isCompact)
+        {
+            return;
+        }
+
+        _isCompactLayout = isCompact;
+        HeroTitleLabel.FontSize = isCompact ? 28 : 36;
+        SelectedInstrumentLabel.FontSize = isCompact ? 20 : 24;
+
+        HeroGrid.ColumnDefinitions.Clear();
+        HomeActionGrid.ColumnDefinitions.Clear();
+        HomeActionGrid.RowDefinitions.Clear();
+        HomeOptionsGrid.ColumnDefinitions.Clear();
+        HomeOptionsGrid.RowDefinitions.Clear();
+
+        if (isCompact)
+        {
+            HeroGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            HeroGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            HomeActionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            HomeActionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(54) });
+            HomeActionGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            HomeActionGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            Grid.SetRow(StartPracticeButton, 0);
+            Grid.SetColumn(StartPracticeButton, 0);
+            Grid.SetColumnSpan(StartPracticeButton, 2);
+            Grid.SetRow(CalibrateButton, 1);
+            Grid.SetColumn(CalibrateButton, 0);
+            Grid.SetColumnSpan(CalibrateButton, 1);
+            Grid.SetRow(SettingsButton, 1);
+            Grid.SetColumn(SettingsButton, 1);
+            Grid.SetColumnSpan(SettingsButton, 1);
+
+            HomeOptionsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            for (var row = 0; row < 6; row++)
+            {
+                HomeOptionsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            }
+
+            MoveOptionCard(ClefCard, 0, 0);
+            MoveOptionCard(RangeCard, 1, 0);
+            MoveOptionCard(InstrumentTypeCard, 2, 0);
+            MoveOptionCard(InstrumentCard, 3, 0);
+            MoveOptionCard(NoteMovementCard, 4, 0);
+            MoveOptionCard(TempoCard, 5, 0);
+            return;
+        }
+
+        HeroGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+        HeroGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+        HomeActionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+        HomeActionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
+        HomeActionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(54) });
+        HomeActionGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        Grid.SetRow(StartPracticeButton, 0);
+        Grid.SetColumn(StartPracticeButton, 0);
+        Grid.SetColumnSpan(StartPracticeButton, 1);
+        Grid.SetRow(CalibrateButton, 0);
+        Grid.SetColumn(CalibrateButton, 1);
+        Grid.SetColumnSpan(CalibrateButton, 1);
+        Grid.SetRow(SettingsButton, 0);
+        Grid.SetColumn(SettingsButton, 2);
+        Grid.SetColumnSpan(SettingsButton, 1);
+
+        HomeOptionsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+        HomeOptionsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+        for (var row = 0; row < 3; row++)
+        {
+            HomeOptionsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        }
+
+        MoveOptionCard(ClefCard, 0, 0);
+        MoveOptionCard(RangeCard, 0, 1);
+        MoveOptionCard(InstrumentTypeCard, 1, 0);
+        MoveOptionCard(InstrumentCard, 1, 1);
+        MoveOptionCard(NoteMovementCard, 2, 0);
+        MoveOptionCard(TempoCard, 2, 1);
+    }
+
+    private static void MoveOptionCard(BindableObject card, int row, int column)
+    {
+        Grid.SetRow(card, row);
+        Grid.SetColumn(card, column);
+        Grid.SetColumnSpan(card, 1);
     }
 
     private async Task LoadHomeAsync()
@@ -53,6 +154,7 @@ public partial class MainPage : ContentPage
 
         LoadInstrumentPickerItems(instrument.InstrumentType, instrument.InstrumentName);
 
+        PracticeButtonLabel.Text = GetPracticeButtonText(_settings.UseCustomMusicXmlLoop);
         HomeBeatTempoPicker.ItemsSource = GetNumberOptions(_practiceOptions.BeatTempoBpms, _settings.BeatTempoBpm, "BPM");
         var jumpLabels = GetMaxJumpLabels(_practiceOptions, instrument);
         HomeMaxJumpPicker.ItemsSource = jumpLabels;
@@ -118,21 +220,48 @@ public partial class MainPage : ContentPage
             ExerciseLength = _settings.ExerciseLength,
             ToleranceCents = _settings.ToleranceCents,
             BeatTempoBpm = int.Parse(beatTempo.Split(' ')[0]),
+            GeneratedBeatDurations = _settings.GeneratedBeatDurations,
             MaxBaseNoteJump = HomeMaxJumpPicker.SelectedIndex,
             AllowedBaseNoteNames = _settings.AllowedBaseNoteNames,
             UseBeginnerRange = !HomeBiggerRangeSwitch.IsToggled,
             AllowSharps = _settings.AllowSharps,
             AvoidOpenStringSharps = _settings.AvoidOpenStringSharps,
-            ShowNoteName = _settings.ShowNoteName
+            ShowNoteName = _settings.ShowNoteName,
+            UseCustomMusicXmlLoop = _settings.UseCustomMusicXmlLoop,
+            CustomMusicXml = _settings.CustomMusicXml
         };
 
         await _practiceDataService.SavePracticeSettingsAsync(_settings);
         await LoadHomeAsync();
     }
 
-    private async void OnOpenPracticeClicked(object sender, EventArgs e)
+    private async void OnStartPracticeTapped(object sender, TappedEventArgs e)
     {
-        await Shell.Current.GoToAsync("//practice?newSession=true");
+        await SaveHomeOptionsAsync();
+        var route = _settings.UseCustomMusicXmlLoop
+            ? "//musicxml"
+            : "//practice?newSession=true";
+
+        await Shell.Current.GoToAsync(route);
+    }
+
+    private async void OnPracticeModeTapped(object sender, TappedEventArgs e)
+    {
+        var selectedMode = await DisplayActionSheet(
+            "Practice mode",
+            "Cancel",
+            null,
+            GeneratedPracticeMode,
+            MusicXmlLoopMode);
+
+        if (selectedMode is null || selectedMode == "Cancel")
+        {
+            return;
+        }
+
+        _settings.UseCustomMusicXmlLoop = selectedMode == MusicXmlLoopMode;
+        PracticeButtonLabel.Text = GetPracticeButtonText(_settings.UseCustomMusicXmlLoop);
+        await SaveHomeOptionsAsync();
     }
 
     private async void OnOpenCalibrationClicked(object sender, EventArgs e)
@@ -172,13 +301,16 @@ public partial class MainPage : ContentPage
     }
 
     private static void AttachButtonHoverEffect(
-        Button button,
+        View button,
         Color defaultBackgroundColor,
         Color hoverBackgroundColor,
         Color textColor)
     {
         button.BackgroundColor = defaultBackgroundColor;
-        button.TextColor = textColor;
+        if (button is Button platformButton)
+        {
+            platformButton.TextColor = textColor;
+        }
 
         var pointerGesture = new PointerGestureRecognizer();
 
@@ -235,6 +367,13 @@ public partial class MainPage : ContentPage
     private static string GetInstrumentTypeFromLabel(string instrumentTypeLabel)
     {
         return instrumentTypeLabel.ToLowerInvariant();
+    }
+
+    private static string GetPracticeButtonText(bool useCustomMusicXmlLoop)
+    {
+        return useCustomMusicXmlLoop
+            ? $"Practice: {MusicXmlLoopMode}"
+            : $"Practice: {GeneratedPracticeMode}";
     }
 
     private static Color GetColor(string key)

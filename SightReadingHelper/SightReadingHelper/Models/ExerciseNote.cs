@@ -14,6 +14,8 @@ public class ExerciseNote
 
     public double FrequencyHz { get; set; }
 
+    public double BeatDuration { get; set; } = 1;
+
     public int BaseNoteIndex { get; set; }
 
     public string BaseNoteName { get; set; } = string.Empty;

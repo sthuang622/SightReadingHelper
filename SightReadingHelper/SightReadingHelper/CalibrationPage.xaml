@@ -20,9 +20,12 @@
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="24" />
                 </Border.StrokeShape>
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Grid x:Name="CalibrationHeaderGrid"
+                      ColumnDefinitions="*,Auto"
+                      ColumnSpacing="12">
                     <VerticalStackLayout Spacing="3">
                         <Label Text="Calibration"
+                               x:Name="CalibrationTitleLabel"
                                FontSize="30"
                                FontFamily="OpenSansSemibold"
                                TextColor="{StaticResource White}" />
@@ -59,22 +62,29 @@
                                  Progress="0" />
                     <Label x:Name="CalibrationMicrophoneStatusLabel"
                            Style="{StaticResource BodyMutedStyle}" />
-                    <HorizontalStackLayout Spacing="10">
+                    <FlexLayout Direction="Row"
+                                Wrap="Wrap"
+                                AlignItems="Start"
+                                JustifyContent="Start">
                         <Button x:Name="StartCalibrationButton"
                                 Text="Start Listening"
+                                Margin="0,0,10,10"
                                 Clicked="OnStartCalibrationClicked" />
                         <Button x:Name="StopCalibrationButton"
                                 Text="Stop"
                                 Style="{StaticResource SecondaryButtonStyle}"
                                 IsEnabled="False"
+                                Margin="0,0,10,10"
                                 Clicked="OnStopCalibrationClicked" />
                         <Button Text="Next"
                                 Style="{StaticResource SecondaryButtonStyle}"
+                                Margin="0,0,10,10"
                                 Clicked="OnNextCalibrationNoteClicked" />
                         <Button Text="Default"
                                 Style="{StaticResource SecondaryButtonStyle}"
+                                Margin="0,0,10,10"
                                 Clicked="OnUseDefaultCalibrationClicked" />
-                    </HorizontalStackLayout>
+                    </FlexLayout>
                 </VerticalStackLayout>
             </Border>
 
@@ -95,13 +105,18 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <HorizontalStackLayout Spacing="10">
+            <FlexLayout Direction="Row"
+                        Wrap="Wrap"
+                        AlignItems="Start"
+                        JustifyContent="Start">
                 <Button Text="Save Calibration"
+                        Margin="0,0,10,10"
                         Clicked="OnSaveCalibrationClicked" />
                 <Button Text="Use Defaults"
                         Style="{StaticResource SecondaryButtonStyle}"
+                        Margin="0,0,10,10"
                         Clicked="OnUseDefaultCalibrationClicked" />
-            </HorizontalStackLayout>
+            </FlexLayout>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

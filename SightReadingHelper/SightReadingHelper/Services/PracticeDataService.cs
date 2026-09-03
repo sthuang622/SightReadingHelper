@@ -16,6 +16,7 @@ public class PracticeDataService
 
     private IReadOnlyList<InstrumentProfile>? _cachedInstruments;
     private PracticeOptionsConfig? _cachedPracticeOptions;
+    private string _sessionMusicXml = string.Empty;
 
     public async Task<IReadOnlyList<InstrumentProfile>> GetInstrumentsAsync()
     {
@@ -69,9 +70,20 @@ public class PracticeDataService
 
     public async Task SavePracticeSettingsAsync(PracticeSettings settings)
     {
+        settings.CustomMusicXml = string.Empty;
         var path = GetSettingsPath();
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         await File.WriteAllTextAsync(path, JsonSerializer.Serialize(settings, _serializerOptions));
+    }
+
+    public string GetSessionMusicXml()
+    {
+        return _sessionMusicXml;
+    }
+
+    public void SetSessionMusicXml(string musicXml)
+    {
+        _sessionMusicXml = musicXml;
     }
 
     public async Task<CalibrationProfile?> GetCalibrationAsync(string instrumentName)
@@ -153,6 +165,12 @@ public class PracticeDataService
         }
 
         settings.AllowedBaseNoteNames ??= [];
+        settings.CustomMusicXml = string.Empty;
+        settings.GeneratedBeatDurations ??= [];
+        settings.GeneratedBeatDurations = settings.GeneratedBeatDurations
+            .Where(duration => duration > 0)
+            .DefaultIfEmpty(1)
+            .ToList();
         return settings;
     }
 

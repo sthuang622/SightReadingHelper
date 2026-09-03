@@ -43,6 +43,7 @@ public class ExerciseGeneratorService
             var candidates = GetCandidatesForNextNote(possibleNotes, notes.LastOrDefault(), settings.MaxBaseNoteJump ?? 1);
             var selectedNote = candidates[Random.Shared.Next(candidates.Count)];
             selectedNote.SequenceNumber = index + 1;
+            selectedNote.BeatDuration = GetGeneratedBeatDuration(settings);
             notes.Add(selectedNote);
         }
 
@@ -57,6 +58,32 @@ public class ExerciseGeneratorService
 
         exercise.MusicXml = _musicXmlService.GenerateExerciseMusicXml(exercise);
         return exercise;
+    }
+
+    public PracticeExercise GenerateMusicXmlLoop(InstrumentProfile instrument, string musicXml)
+    {
+        var importedNotes = _musicXmlService.ParseNotes(musicXml)
+            .Where(note => note.DisplayMidiNote >= instrument.LowestMidiNote && note.DisplayMidiNote <= instrument.HighestMidiNote)
+            .ToList();
+
+        if (importedNotes.Count == 0)
+        {
+            throw new InvalidOperationException("No playable notes were found in the MusicXML for the selected instrument.");
+        }
+
+        var notes = importedNotes
+            .Select((note, index) => CreateExerciseNote(note.DisplayMidiNote, index + 1, instrument, note.BeatDuration))
+            .ToList();
+
+        return new PracticeExercise
+        {
+            InstrumentName = instrument.InstrumentName,
+            Clef = instrument.DefaultClef,
+            SoundingTransposeSemitones = instrument.SoundingTransposeSemitones,
+            GeneratedAtUtc = DateTime.UtcNow,
+            Notes = notes,
+            MusicXml = musicXml
+        };
     }
 
     private static List<ExerciseNote> GetCandidatesForNextNote(
@@ -79,7 +106,11 @@ public class ExerciseGeneratorService
             : possibleNotes.Select(CloneNote).ToList();
     }
 
-    private static ExerciseNote CreateExerciseNote(int midiNote, int sequenceNumber, InstrumentProfile instrument)
+    private static ExerciseNote CreateExerciseNote(
+        int midiNote,
+        int sequenceNumber,
+        InstrumentProfile instrument,
+        double beatDuration = 1)
     {
         var baseNoteIndex = GetBaseNoteIndex(midiNote, instrument.BaseNotes);
         var baseNote = instrument.BaseNotes[baseNoteIndex];
@@ -93,6 +124,7 @@ public class ExerciseGeneratorService
             DisplayMidiNote = midiNote,
             DisplayNoteName = PitchMath.MidiToNoteName(midiNote),
             FrequencyHz = PitchMath.MidiToFrequency(soundingMidiNote),
+            BeatDuration = beatDuration,
             BaseNoteIndex = baseNoteIndex,
             BaseNoteName = baseNote.NoteName
         };
@@ -108,9 +140,21 @@ public class ExerciseGeneratorService
             DisplayMidiNote = note.DisplayMidiNote,
             DisplayNoteName = note.DisplayNoteName,
             FrequencyHz = note.FrequencyHz,
+            BeatDuration = note.BeatDuration,
             BaseNoteIndex = note.BaseNoteIndex,
             BaseNoteName = note.BaseNoteName
         };
+    }
+
+    private static double GetGeneratedBeatDuration(PracticeSettings settings)
+    {
+        var durations = settings.GeneratedBeatDurations
+            .Where(duration => duration > 0)
+            .ToList();
+
+        return durations.Count == 0
+            ? 1
+            : durations[Random.Shared.Next(durations.Count)];
     }
 
     private static bool IsAllowedAccidental(

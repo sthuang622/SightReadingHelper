@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SightReadingHelper.MusicXmlPage"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             Title="MusicXML">
+    <ScrollView>
+        <VerticalStackLayout Padding="20,18,20,30"
+                             Spacing="16">
+            <Border Padding="22,18">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="{StaticResource PrimaryDarkText}" Offset="0" />
+                        <GradientStop Color="{StaticResource Primary}" Offset="0.7" />
+                        <GradientStop Color="{StaticResource Accent}" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="24" />
+                </Border.StrokeShape>
+                <Grid x:Name="MusicXmlHeaderGrid"
+                      ColumnDefinitions="*,Auto"
+                      ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="3">
+                        <Label x:Name="MusicXmlTitleLabel"
+                               Text="MusicXML Loop"
+                               FontSize="30"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource White}" />
+                        <Label x:Name="MusicXmlSubtitleLabel"
+                               Text="Import or paste a section before each loop practice"
+                               Style="{StaticResource BodyMutedStyle}"
+                               TextColor="{StaticResource White}" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1"
+                            Text="Home"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Clicked="OnHomeClicked" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource PanelCardStyle}">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="*,Auto"
+                          ColumnSpacing="12">
+                        <Label Grid.Column="0"
+                               Text="MusicXML"
+                               Style="{StaticResource SectionTitleStyle}" />
+                        <Button Grid.Column="1"
+                                Text="Import"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Clicked="OnImportFromClipboardClicked" />
+                    </Grid>
+
+                    <Editor x:Name="MusicXmlEditor"
+                            AutoSize="TextChanges"
+                            HeightRequest="300"
+                            Placeholder="Paste MusicXML here"
+                            TextChanged="OnMusicXmlTextChanged" />
+
+                    <Label x:Name="MusicXmlStatusLabel"
+                           Style="{StaticResource BodyMutedStyle}" />
+
+                    <Button x:Name="StartLoopPracticeButton"
+                            Text="Start Loop Practice"
+                            IsEnabled="False"
+                            Clicked="OnStartLoopPracticeClicked" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

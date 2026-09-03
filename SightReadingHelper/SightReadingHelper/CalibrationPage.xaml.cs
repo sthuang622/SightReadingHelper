@@ -24,6 +24,7 @@ public partial class CalibrationPage : ContentPage
     private DateTimeOffset _stableCandidateStartedAt;
     private readonly List<double> _stableFrequencies = [];
     private readonly StaffNotationDrawable _notationDrawable = new();
+    private bool? _isCompactLayout;
 
     public CalibrationPage(
         PracticeDataService practiceDataService,
@@ -42,6 +43,60 @@ public partial class CalibrationPage : ContentPage
     {
         base.OnAppearing();
         await LoadCalibrationAsync();
+    }
+
+    protected override void OnSizeAllocated(double width, double height)
+    {
+        base.OnSizeAllocated(width, height);
+        ApplyResponsiveLayout(width);
+        RenderCalibrationNotation();
+    }
+
+    private void ApplyResponsiveLayout(double width)
+    {
+        var isCompact = width > 0 && width < 720;
+        if (_isCompactLayout == isCompact)
+        {
+            return;
+        }
+
+        _isCompactLayout = isCompact;
+        CalibrationTitleLabel.FontSize = isCompact ? 26 : 30;
+        CalibrationNotationView.HeightRequest = isCompact ? 180 : 220;
+
+        CalibrationHeaderGrid.ColumnDefinitions.Clear();
+        CalibrationHeaderGrid.RowDefinitions.Clear();
+
+        if (isCompact)
+        {
+            CalibrationHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            CalibrationHeaderGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            CalibrationHeaderGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var homeButton = CalibrationHeaderGrid.Children.OfType<Button>().FirstOrDefault();
+            if (homeButton is not null)
+            {
+                Grid.SetRow(homeButton, 1);
+                Grid.SetColumn(homeButton, 0);
+                homeButton.HorizontalOptions = LayoutOptions.Start;
+                homeButton.Margin = new Thickness(0, 10, 0, 0);
+            }
+
+            return;
+        }
+
+        CalibrationHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+        CalibrationHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        CalibrationHeaderGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+        var desktopHomeButton = CalibrationHeaderGrid.Children.OfType<Button>().FirstOrDefault();
+        if (desktopHomeButton is not null)
+        {
+            Grid.SetRow(desktopHomeButton, 0);
+            Grid.SetColumn(desktopHomeButton, 1);
+            desktopHomeButton.HorizontalOptions = LayoutOptions.Fill;
+            desktopHomeButton.Margin = Thickness.Zero;
+        }
     }
 
     protected override async void OnDisappearing()
@@ -316,7 +371,11 @@ public partial class CalibrationPage : ContentPage
         _notationDrawable.Clef = _currentInstrument?.DefaultClef ?? "Alto clef";
         _notationDrawable.CurrentNoteIndex = _currentCalibrationIndex;
         _notationDrawable.GhostMidiNote = null;
-        CalibrationNotationView.WidthRequest = StaffNotationDrawable.GetRequiredWidth(notes.Count);
+        var requiredWidth = StaffNotationDrawable.GetRequiredWidth(notes.Count);
+        var viewportWidth = Width > 0
+            ? Math.Max(320, Width - 78)
+            : requiredWidth;
+        CalibrationNotationView.WidthRequest = Math.Max(requiredWidth, viewportWidth);
         CalibrationNotationView.Invalidate();
     }
 

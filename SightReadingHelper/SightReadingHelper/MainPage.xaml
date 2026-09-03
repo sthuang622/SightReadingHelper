@@ -25,15 +25,18 @@
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="28" />
                 </Border.StrokeShape>
-                <Grid RowDefinitions="Auto,Auto,Auto"
+                <Grid x:Name="HeroGrid"
+                      RowDefinitions="Auto,Auto,Auto"
                       ColumnDefinitions="*,Auto"
                       ColumnSpacing="14"
                       RowSpacing="10">
                     <Label Grid.Row="0"
                            Grid.Column="0"
+                           x:Name="HeroTitleLabel"
                            Text="Sight Reading Helper"
                            FontSize="36"
                            FontFamily="OpenSansSemibold"
+                           LineBreakMode="WordWrap"
                            TextColor="{StaticResource White}" />
                     <Border Grid.Row="0"
                             Grid.Column="1"
@@ -64,18 +67,49 @@
                 </Grid>
             </Border>
 
-            <Grid ColumnDefinitions="*,150,54"
+            <Grid x:Name="HomeActionGrid"
+                  ColumnDefinitions="*,150,54"
+                  RowDefinitions="Auto"
                   ColumnSpacing="12"
                   RowSpacing="12">
-                <Button Grid.Column="0"
+                <Border Grid.Column="0"
                         x:Name="StartPracticeButton"
-                        Text="Start Practice"
                         BackgroundColor="{StaticResource Primary}"
-                        TextColor="{StaticResource White}"
-                        FontSize="17"
-                        FontFamily="OpenSansSemibold"
-                        Padding="18,15"
-                        Clicked="OnOpenPracticeClicked" />
+                        StrokeThickness="0"
+                        MinimumHeightRequest="52">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="8" />
+                    </Border.StrokeShape>
+                    <Grid ColumnDefinitions="*,56">
+                        <Grid Grid.Column="0"
+                              Padding="18,15">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnStartPracticeTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label x:Name="PracticeButtonLabel"
+                                   Text="Practice"
+                                   TextColor="{StaticResource White}"
+                                   FontSize="17"
+                                   FontFamily="OpenSansSemibold"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   LineBreakMode="TailTruncation" />
+                        </Grid>
+                        <Grid Grid.Column="1"
+                              x:Name="PracticeModeDropDownArea"
+                              BackgroundColor="#174638">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnPracticeModeTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Text="▼"
+                                   TextColor="{StaticResource White}"
+                                   FontSize="13"
+                                   FontFamily="OpenSansSemibold"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Grid>
+                    </Grid>
+                </Border>
                 <Button Grid.Column="1"
                         x:Name="CalibrateButton"
                         Text="Calibrate"
@@ -98,7 +132,8 @@
                         Clicked="OnOpenSettingsClicked" />
             </Grid>
 
-            <Grid ColumnDefinitions="*,*"
+            <Grid x:Name="HomeOptionsGrid"
+                  ColumnDefinitions="*,*"
                   RowDefinitions="Auto,Auto,Auto"
                   ColumnSpacing="12"
                   RowSpacing="12">
