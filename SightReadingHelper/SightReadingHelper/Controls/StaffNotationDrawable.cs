@@ -132,17 +132,66 @@ public class StaffNotationDrawable : IDrawable
         DrawLedgerLines(canvas, x, staffPosition);
         DrawAccidental(canvas, note.DisplayMidiNote, x, y);
 
-        canvas.FillColor = isComplete ? Color.FromArgb("#1F5C4A") : Color.FromArgb("#26231E");
-        canvas.StrokeColor = Color.FromArgb("#26231E");
-        canvas.StrokeSize = 1.5f;
+        DrawRhythmicNoteHead(canvas, note, x, y, isComplete);
+        DrawStemAndFlag(canvas, note, x, y, isComplete);
+    }
+
+    private static void DrawRhythmicNoteHead(ICanvas canvas, ExerciseNote note, float x, float y, bool isComplete)
+    {
+        var noteColor = isComplete ? Color.FromArgb("#1F5C4A") : Color.FromArgb("#26231E");
+        var isFilled = note.BeatDuration < 2;
+
+        canvas.StrokeColor = noteColor;
+        canvas.StrokeSize = 2;
         canvas.SaveState();
         canvas.Rotate(-18, x, y);
-        canvas.FillEllipse(x - (NoteWidth / 2), y - (NoteHeight / 2), NoteWidth, NoteHeight);
-        canvas.RestoreState();
 
-        canvas.StrokeColor = isComplete ? Color.FromArgb("#1F5C4A") : Color.FromArgb("#26231E");
+        if (isFilled)
+        {
+            canvas.FillColor = noteColor;
+            canvas.FillEllipse(x - (NoteWidth / 2), y - (NoteHeight / 2), NoteWidth, NoteHeight);
+        }
+        else
+        {
+            canvas.FillColor = Color.FromArgb("#FFFDF8");
+            canvas.FillEllipse(x - (NoteWidth / 2), y - (NoteHeight / 2), NoteWidth, NoteHeight);
+            canvas.DrawEllipse(x - (NoteWidth / 2), y - (NoteHeight / 2), NoteWidth, NoteHeight);
+        }
+
+        canvas.RestoreState();
+    }
+
+    private static void DrawStemAndFlag(ICanvas canvas, ExerciseNote note, float x, float y, bool isComplete)
+    {
+        if (note.BeatDuration >= 4)
+        {
+            return;
+        }
+
+        var noteColor = isComplete ? Color.FromArgb("#1F5C4A") : Color.FromArgb("#26231E");
+        var stemX = x + 9;
+        var stemTopY = y - 46;
+
+        canvas.StrokeColor = noteColor;
         canvas.StrokeSize = 2;
-        canvas.DrawLine(x + 9, y, x + 9, y - 46);
+        canvas.DrawLine(stemX, y, stemX, stemTopY);
+
+        if (note.BeatDuration >= 1)
+        {
+            return;
+        }
+
+        canvas.StrokeSize = 2.4f;
+        canvas.DrawLine(stemX, stemTopY, stemX + 17, stemTopY + 9);
+        canvas.DrawLine(stemX + 17, stemTopY + 9, stemX + 10, stemTopY + 20);
+
+        if (note.BeatDuration >= 0.5d)
+        {
+            return;
+        }
+
+        canvas.DrawLine(stemX, stemTopY + 8, stemX + 15, stemTopY + 17);
+        canvas.DrawLine(stemX + 15, stemTopY + 17, stemX + 9, stemTopY + 28);
     }
 
     private void DrawGhostNote(ICanvas canvas)
